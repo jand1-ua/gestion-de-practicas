@@ -12,25 +12,26 @@ php sesion_1/2-poo/demo_poo.php
 
 php sesion_1/3-namespaces/demo_namespaces.php
 
------------------------------
+--------------------------------------------------------
 
 Iteración 2 ejecutar en la raíz del proyecto:
 
 php artisan make:controller DemoPracticasController
 
-Esto crea app/Http/Controllers/DemoPracticasController.php
+- Esto crea app/Http/Controllers/DemoPracticasController.php
 
-En la ruta resources/views/demo/
-Están las vistas de los Domains
+- En la ruta resources/views/demo/... están las vistas de los Domains
 
-Creación de test unitarios (Unit) para el dominio Practica:
+- Creación de test unitarios (Unit) para el dominio Practica:
 
 php artisan make:test PracticaDomainTest --unit
 
-ECreación de test de rutas (Feature):
+- Creación de test de rutas (Feature):
 
 php artisan make:test DemoPracticasControllerTest
 
-Para ejecutar los test en el terminal:
+- Para ejecutar los test en el terminal:
 
 php artisan test
+
+--------------------------------------------------------
