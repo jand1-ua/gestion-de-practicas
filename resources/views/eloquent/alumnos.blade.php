@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Alumnos (Eloquent)</title>
+    <title>Alumnos (Eloquent ORM)</title>
 </head>
 <body>
     <h1>Alumnos (Eloquent ORM)</h1>
@@ -25,8 +25,8 @@
                 <td>{{ $alumno->id }}</td>
                 <td>{{ $alumno->nombre }}</td>
                 <td>{{ $alumno->email }}</td>
-                <td>{{ $alumno->grado }}</td>
-                <td>{{ $alumno->curso }}</td>
+                <td>{{ $alumno->grado ?? '-' }}</td>
+                <td>{{ $alumno->curso ?? '-' }}</td>
                 <td>{{ $alumno->practicas->count() }}</td>
             </tr>
         @endforeach
