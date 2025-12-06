@@ -25,4 +25,15 @@ Route::get('/db/alumnos', [DbPracticasController::class, 'alumnos'])
 Route::get('/db/practicas', [DbPracticasController::class, 'practicas'])
     ->name('db.practicas');
 
+// -------------------------------------------------------------------------------------------
+// Sesión 4
+
+use App\Http\Controllers\EloquentPracticasController;
+
+Route::get('/eloquent/alumnos', [EloquentPracticasController::class, 'alumnos'])
+    ->name('eloquent.alumnos');
+
+Route::get('/eloquent/practicas', [EloquentPracticasController::class, 'practicas'])
+    ->name('eloquent.practicas');
+
 
