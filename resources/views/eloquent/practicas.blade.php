@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Prácticas (Eloquent)</title>
+    <title>Prácticas (Eloquent ORM)</title>
 </head>
 <body>
     <h1>Prácticas (Eloquent ORM)</h1>

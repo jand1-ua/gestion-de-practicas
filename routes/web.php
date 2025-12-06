@@ -35,5 +35,3 @@ Route::get('/eloquent/alumnos', [EloquentPracticasController::class, 'alumnos'])
 
 Route::get('/eloquent/practicas', [EloquentPracticasController::class, 'practicas'])
     ->name('eloquent.practicas');
-
-

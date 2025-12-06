@@ -12,9 +12,9 @@ class EloquentPracticasController extends Controller
 
     public function alumnos()
     {
-        // Eager loading de prácticas
+        // Carga todos los alumnos con sus prácticas
         $alumnos = Alumno::with('practicas')
-            ->orderBy('nombre')
+            ->orderBy('id')
             ->get();
 
         return view('eloquent.alumnos', compact('alumnos'));
@@ -22,7 +22,7 @@ class EloquentPracticasController extends Controller
 
     
     // Listado de prácticas con su alumno, empresa y tutor.
-     
+    
     public function practicas()
     {
         $practicas = Practica::with(['alumno', 'empresa', 'tutor'])
