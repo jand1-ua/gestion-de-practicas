@@ -99,3 +99,45 @@ php artisan make:controller DbPracticasController
 
 Se genera en app/Http/Controllers/DbPracticasController.php
 
+--------------------------------------------------------
+Iteración 4: Eloquent + relaciones
+
+- Crear los modelos Eloquent (no usar -m para no generar nuevas migraciones):
+
+php artisan make:model Alumno
+php artisan make:model Empresa
+php artisan make:model Tutor
+php artisan make:model Practica
+
+Se crean en app/Models/
+
+- Creamos un controlador nuevo:
+
+php artisan make:controller EloquentPracticasController
+
+Se crea en app/Http/Controllers/EloquentPracticasController.php
+
+- Se puede probar en Tinker para ver como la clase Eloquent resuelve las relaciones de forma automática:
+
+php artisan tinker
+
+Dentro de tinker poner de una en una las siguientes instrucciones:
+
+App\Models\Alumno::first();
+App\Models\Alumno::with('practicas')->first()->practicas;
+App\Models\Practica::with(['alumno','empresa','tutor'])->first();
+
+
+git status
+git add app/Models app/Http/Controllers/EloquentPracticasController.php resources/views/eloquent routes/web.php tests/Feature/EloquentPracticasTest.php
+git commit -m "Iteración 4: modelos Eloquent y relaciones Alumno–Empresa–Tutor–Práctica"
+
+
+git tag s4-eloquent-relaciones
+
+
+git push -u origin sesion4-eloquent-orm
+git push origin s4-eloquent-relaciones
+
+
+
