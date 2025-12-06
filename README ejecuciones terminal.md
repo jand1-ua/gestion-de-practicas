@@ -128,16 +128,7 @@ App\Models\Alumno::with('practicas')->first()->practicas;
 App\Models\Practica::with(['alumno','empresa','tutor'])->first();
 
 
-git status
-git add app/Models app/Http/Controllers/EloquentPracticasController.php resources/views/eloquent routes/web.php tests/Feature/EloquentPracticasTest.php
-git commit -m "Iteración 4: modelos Eloquent y relaciones Alumno–Empresa–Tutor–Práctica"
 
-
-git tag s4-eloquent-relaciones
-
-
-git push -u origin sesion4-eloquent-orm
-git push origin s4-eloquent-relaciones
 
 
 
