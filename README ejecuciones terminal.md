@@ -127,5 +127,15 @@ App\Models\Alumno::first();
 App\Models\Alumno::with('practicas')->first()->practicas;
 App\Models\Practica::with(['alumno','empresa','tutor'])->first();
 
+--------------------------------------------------------
+
+Iteración 5, 6 y 7: CRUD de alumnos, empresas, tutores y prácticas
+
+La iteración 5 muestra el CRUD de alumnos.
+
+La iteración 6 tiene el CRUD de empresas y tutores.
+
+La iteración 7 muestra el CRUD de las prácticas que es el más complejo ya que contiene claves foraneas con las demás clases
+
 
 

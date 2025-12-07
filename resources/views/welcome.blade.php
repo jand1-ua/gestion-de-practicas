@@ -117,6 +117,7 @@
         <li><a href="{{ route('admin.alumnos.index') }}">Gestión de alumnos</a></li>
         <li><a href="{{ route('admin.empresas.index') }}">Gestión de empresas</a></li>
         <li><a href="{{ route('admin.tutores.index') }}">Gestión de tutores</a></li>
+        <li><a href="{{ route('admin.practicas.index') }}">Gestión de prácticas</a></li>
     </ul>
     </section>
 
