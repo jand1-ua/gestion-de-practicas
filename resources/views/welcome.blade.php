@@ -112,16 +112,14 @@
     </section>
 
     <section>
-    <h2>Gestión de alumnos (CRUD)</h2>
-    <p>Ejemplo completo de alta, baja, modificación y consulta de alumnos.</p>
+    <h2>Administración</h2>
     <ul>
-        <li>
-            <a href="{{ route('admin.alumnos.index') }}">
-                Abrir módulo de administración de alumnos
-            </a>
-        </li>
+        <li><a href="{{ route('admin.alumnos.index') }}">Gestión de alumnos</a></li>
+        <li><a href="{{ route('admin.empresas.index') }}">Gestión de empresas</a></li>
+        <li><a href="{{ route('admin.tutores.index') }}">Gestión de tutores</a></li>
     </ul>
     </section>
+
 
 
     <footer>
