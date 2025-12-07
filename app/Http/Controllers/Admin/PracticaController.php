@@ -8,6 +8,7 @@ use App\Models\Empresa;
 use App\Models\Tutor;
 use App\Models\Practica;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\PracticaRequest;
 
 class PracticaController extends Controller
 {
@@ -29,19 +30,9 @@ class PracticaController extends Controller
         return view('admin.practicas.create', compact('alumnos', 'empresas', 'tutores'));
     }
 
-    public function store(Request $request)
+    public function store(PracticaRequest $request)
     {
-        $data = $request->validate([
-            'alumno_id'     => ['required', 'exists:alumnos,id'],
-            'empresa_id'    => ['required', 'exists:empresas,id'],
-            'tutor_id'      => ['nullable', 'exists:tutores,id'],
-            'estado'        => ['required', 'string', 'max:50'],
-            'fecha_inicio'  => ['required', 'date'],
-            'fecha_fin'     => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
-            'observaciones' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        Practica::create($data);
+        Practica::create($request->validated());
 
         return redirect()
             ->route('admin.practicas.index')
@@ -64,19 +55,9 @@ class PracticaController extends Controller
         return view('admin.practicas.edit', compact('practica', 'alumnos', 'empresas', 'tutores'));
     }
 
-    public function update(Request $request, Practica $practica)
+    public function update(PracticaRequest $request, Practica $practica)
     {
-        $data = $request->validate([
-            'alumno_id'     => ['required', 'exists:alumnos,id'],
-            'empresa_id'    => ['required', 'exists:empresas,id'],
-            'tutor_id'      => ['nullable', 'exists:tutores,id'],
-            'estado'        => ['required', 'string', 'max:50'],
-            'fecha_inicio'  => ['required', 'date'],
-            'fecha_fin'     => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
-            'observaciones' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        $practica->update($data);
+        $practica->update($request->validated());
 
         return redirect()
             ->route('admin.practicas.index')
