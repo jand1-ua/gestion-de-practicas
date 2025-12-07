@@ -36,21 +36,26 @@ Route::get('/eloquent/alumnos', [EloquentPracticasController::class, 'alumnos'])
 Route::get('/eloquent/practicas', [EloquentPracticasController::class, 'practicas'])
     ->name('eloquent.practicas');
 
-// Sesion 5 y 6
+// Sesion 5, 6 y 7
 
 use App\Http\Controllers\Admin\AlumnoController as AdminAlumnoController;
 use App\Http\Controllers\Admin\EmpresaController as AdminEmpresaController;
 use App\Http\Controllers\Admin\TutorController as AdminTutorController;
+use App\Http\Controllers\Admin\PracticaController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Alumnos (iteración 5)
     Route::resource('alumnos', AdminAlumnoController::class);
 
-    // Empresas (nueva)
+    // Empresas (iteración 6)
     Route::resource('empresas', AdminEmpresaController::class);
 
-    // Tutores (nueva)
+    // Tutores (iteración 6)
     Route::resource('tutores', AdminTutorController::class)
         ->parameters(['tutores' => 'tutor']);
+
+    // NUEVO: CRUD de prácticas
+    Route::resource('practicas', PracticaController::class)
+        ->names('practicas');
 });
