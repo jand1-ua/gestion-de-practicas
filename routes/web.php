@@ -35,3 +35,11 @@ Route::get('/eloquent/alumnos', [EloquentPracticasController::class, 'alumnos'])
 
 Route::get('/eloquent/practicas', [EloquentPracticasController::class, 'practicas'])
     ->name('eloquent.practicas');
+
+// Sesion 5
+
+use App\Http\Controllers\Admin\AlumnoController as AdminAlumnoController;
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::resource('alumnos', AdminAlumnoController::class);
+});

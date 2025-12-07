@@ -111,6 +111,19 @@
         </ul>
     </section>
 
+    <section>
+    <h2>Gestión de alumnos (CRUD)</h2>
+    <p>Ejemplo completo de alta, baja, modificación y consulta de alumnos.</p>
+    <ul>
+        <li>
+            <a href="{{ route('admin.alumnos.index') }}">
+                Abrir módulo de administración de alumnos
+            </a>
+        </li>
+    </ul>
+    </section>
+
+
     <footer>
         Gestión de Prácticas · Laravel v{{ Illuminate\Foundation\Application::VERSION }}
         (PHP v{{ PHP_VERSION }})
