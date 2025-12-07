@@ -137,5 +137,12 @@ La iteración 6 tiene el CRUD de empresas y tutores.
 
 La iteración 7 muestra el CRUD de las prácticas que es el más complejo ya que contiene claves foraneas con las demás clases
 
+--------------------------------------------------------
+Iteración 8: Validación de formularios
+
+En esta iteracion se crean los Request de las entidades de la base de datos y ajustamos los Controllers para que tengan en cuenta los Request.
+
+Hay unos test que hacen pruebas básicas para comprobar que las validaciones funcionan correctamente (AdminCrudTest)
+
 
 
