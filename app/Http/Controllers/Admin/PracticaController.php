@@ -12,13 +12,52 @@ use App\Http\Requests\Admin\PracticaRequest;
 
 class PracticaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $practicas = Practica::with(['alumno', 'empresa', 'tutor'])
-            ->orderBy('id')
-            ->get();
+        // Construimos la consulta base con las relaciones necesarias
+        $query = Practica::with(['alumno', 'empresa', 'tutor'])
+            ->orderBy('id');
 
-        return view('admin.practicas.index', compact('practicas'));
+        // Filtros opcionales
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
+
+        if ($request->filled('alumno_id')) {
+            $query->where('alumno_id', $request->alumno_id);
+        }
+
+        if ($request->filled('tutor_id')) {
+            $query->where('tutor_id', $request->tutor_id);
+        }
+
+        // Paginación (10 por página) y preservamos los filtros en los enlaces
+        $practicas = $query->paginate(10)->appends($request->query());
+
+        // Listas auxiliares para los combos de filtro
+        $alumnos  = Alumno::orderBy('nombre')->get();
+        $empresas = Empresa::orderBy('nombre')->get();
+        $tutores  = Tutor::orderBy('nombre')->get();
+
+        // Estados válidos 
+        $estados = [
+            ''           => 'Todos',
+            'en_curso'   => 'En curso',
+            'pendiente'  => 'Pendiente',
+            'finalizada' => 'Finalizada',
+        ];
+
+        return view('admin.practicas.index', compact(
+            'practicas',
+            'alumnos',
+            'empresas',
+            'tutores',
+            'estados'
+        ));
     }
 
     public function create()

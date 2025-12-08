@@ -212,4 +212,22 @@ class AdminCrudTest extends TestCase
 
         $response->assertSessionHasErrors(['estado']);
     }
+
+    public function test_filtrar_practicas_por_estado_pendiente()
+    {
+        // En los seeders hay:
+        // - una práctica en_curso
+        // - una práctica pendiente
+        $response = $this->get(route('admin.practicas.index', [
+            'estado' => 'pendiente',
+        ]));
+
+        $response->assertStatus(200);
+
+        // Debe aparecer la observación de la práctica pendiente
+        $response->assertSee('Pendiente de firma de convenio.');
+
+        // Y no debería aparecer la de "en curso"
+        $response->assertDontSee('Prácticas de desarrollo web en Laravel.');
+    }
 }
