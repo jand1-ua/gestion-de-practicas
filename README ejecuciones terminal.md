@@ -153,6 +153,45 @@ También se actualiza index.blade.php para que use filtros y paginación.
 
 También añadimos un test en AdminCrudTest para comprobar el funcionamiento del filtro.
 
+--------------------------------------------------------
+Iteración 10: Autenticación + roles + área por tipo de usuario
 
+Usaremos los modelos estándar de Laravel, extendidos con roles -> admin, alumno y tutor
 
+Creamos dos nuevas migraciones una para crear la tabla user y otra para los roles (importante el orden, primero users y después roles):
 
+php artisan make:migration create_users_table
+
+php artisan make:migration add_role_relations_to_users_table
+
+Para crear la carpeta middleware junto con el fichero CheckRole.php ejecutar en terminal en la ubicación del proyecto:
+
+php artisan make:middleware CheckRole
+
+Hay que registrar el middleware en boostrap/app.php para registrar el alias role
+
+En esta sesión también se creó la carpeta Auth en Controllers junto con el controlador del Login (LoginController.php)
+
+Se modificó las rutas de web.php para que usen los middleware de roles.
+
+También se crearon las carpetas dentro de las vistas auth y areas.
+
+Dentro de auth se creó el fichero login.blade.php que es la vista de la página login.
+
+Dentro de areas está alumno.blade.php y tutor.blade.php que contiene las paginas que se muestran cuando se inicia sesión con los respectivos roles.
+
+Alumnos:
+correos -> Están en el seeeder de alumno
+contraseña -> alumno123
+
+Tutores:
+correos -> Están en el seeder de tutores
+contraseña -> tutor123
+
+Administrador:
+correo -> admin@example.com
+contraseña -> admin123
+
+Ahora cuando iniciamos sesion dependiendo del rol tendremos unos permisos específicos.
+
+Se creó también el fichero RolesTest.php en "tests/Feature/RolesTest.php" para hacer pruebas de diferentes casuisticas para comprobar que los permisos de los distintos roles funcionan de la forma esperada.
