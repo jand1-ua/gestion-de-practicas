@@ -2,46 +2,37 @@
 
 namespace App\Models;
 
-use App\Models\Alumno;
-use App\Models\Tutor;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    
+    // Atributos asignables en masa. 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
-        'alumno_id',
-        'tutor_id',
+        'role',       // 'admin', 'alumno', 'tutor'
+        'alumno_id',  
+        'tutor_id',   
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
+    
+    // Atributos ocultos para serialización.
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    
+    // Casts.
     protected function casts(): array
     {
         return [
@@ -50,17 +41,50 @@ class User extends Authenticatable
         ];
     }
 
-    
-    // Relación opcional con un alumno (si el usuario tiene rol "alumno").
+    // -------------------------------------------------
+    // Métodos de ayuda para roles
+    // -------------------------------------------------
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isAlumno(): bool
+    {
+        return $this->role === 'alumno';
+    }
+
+    public function isTutor(): bool
+    {
+        return $this->role === 'tutor';
+    }
+
+    // -------------------------------------------------
+    // Relaciones con Alumno / Tutor
+    // -------------------------------------------------
+
     public function alumno(): BelongsTo
     {
         return $this->belongsTo(Alumno::class);
     }
 
-    
-    // Relación opcional con un tutor (si el usuario tiene rol "tutor").
     public function tutor(): BelongsTo
     {
         return $this->belongsTo(Tutor::class);
+    }
+
+    // -------------------------------------------------
+    // Relaciones de mensajería
+    // -------------------------------------------------
+
+    public function mensajesEnviados(): HasMany
+    {
+        return $this->hasMany(Mensaje::class, 'remitente_id');
+    }
+
+    public function mensajesRecibidos(): HasMany
+    {
+        return $this->hasMany(Mensaje::class, 'destinatario_id');
     }
 }

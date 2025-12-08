@@ -93,7 +93,6 @@
         </p>
     @endif
 
-
     {{-- Sesión 1 --}}
     <section>
         <h2>Sesión 1 – PHP básico (CLI)</h2>
@@ -136,14 +135,30 @@
         </ul>
     </section>
 
+    {{-- Administración --}}
     <section>
-    <h2>Administración</h2>
-    <ul>
-        <li><a href="{{ route('admin.alumnos.index') }}">Gestión de alumnos</a></li>
-        <li><a href="{{ route('admin.empresas.index') }}">Gestión de empresas</a></li>
-        <li><a href="{{ route('admin.tutores.index') }}">Gestión de tutores</a></li>
-        <li><a href="{{ route('admin.practicas.index') }}">Gestión de prácticas</a></li>
-    </ul>
+        <h2>Administración</h2>
+        <ul>
+            <li><a href="{{ route('admin.alumnos.index') }}">Gestión de alumnos</a></li>
+            <li><a href="{{ route('admin.empresas.index') }}">Gestión de empresas</a></li>
+            <li><a href="{{ route('admin.tutores.index') }}">Gestión de tutores</a></li>
+            <li><a href="{{ route('admin.practicas.index') }}">Gestión de prácticas</a></li>
+        </ul>
+    </section>
+
+    {{-- Mensajería interna --}}
+    <section>
+        <h2>Mensajería interna</h2>
+        <p>Comunicación entre administradores, alumnos y tutores dentro de la plataforma.</p>
+        <ul>
+            <li>
+                @if (Auth::check())
+                    <a href="{{ route('mensajes.index') }}">Ir a mi bandeja de mensajes</a>
+                @else
+                    Debes <a href="{{ route('login') }}">iniciar sesión</a> para acceder a la mensajería.
+                @endif
+            </li>
+        </ul>
     </section>
 
     <footer>

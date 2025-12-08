@@ -107,3 +107,15 @@ Route::middleware(['auth', 'role:tutor'])
         return view('areas.tutor', compact('user', 'tutor'));
     })
     ->name('area.tutor');
+
+
+// -----------------------------------------------------------------------------
+// Mensajería interna (Sesión 11 / Iteración final)
+
+use App\Http\Controllers\MensajeController;
+
+Route::middleware('auth')->group(function () {
+    Route::resource('mensajes', MensajeController::class)
+        ->only(['index', 'create', 'store', 'show'])
+        ->names('mensajes');
+});
