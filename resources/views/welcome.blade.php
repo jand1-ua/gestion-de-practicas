@@ -69,6 +69,31 @@
         </p>
     </header>
 
+    @php use Illuminate\Support\Facades\Auth; @endphp
+
+    @if (Auth::check())
+        <p style="font-size:.9rem; color:#555;">
+            Sesión iniciada como <strong>{{ Auth::user()->name }}</strong>
+            (rol: {{ Auth::user()->role }}).
+            @if (Auth::user()->role === 'admin')
+                <a href="{{ route('admin.dashboard') }}">Ir al panel de administración</a>
+            @elseif (Auth::user()->role === 'alumno')
+                <a href="{{ route('area.alumno') }}">Ir a mi área de alumno</a>
+            @elseif (Auth::user()->role === 'tutor')
+                <a href="{{ route('area.tutor') }}">Ir a mi área de tutor</a>
+            @endif
+        </p>
+        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+            @csrf
+            <button type="submit">Cerrar sesión</button>
+        </form>
+    @else
+        <p style="font-size:.9rem; color:#555;">
+            <a href="{{ route('login') }}">Iniciar sesión</a>
+        </p>
+    @endif
+
+
     {{-- Sesión 1 --}}
     <section>
         <h2>Sesión 1 – PHP básico (CLI)</h2>
@@ -120,8 +145,6 @@
         <li><a href="{{ route('admin.practicas.index') }}">Gestión de prácticas</a></li>
     </ul>
     </section>
-
-
 
     <footer>
         Gestión de Prácticas · Laravel v{{ Illuminate\Foundation\Application::VERSION }}
