@@ -144,5 +144,15 @@ En esta iteracion se crean los Request de las entidades de la base de datos y aj
 
 Hay unos test que hacen pruebas básicas para comprobar que las validaciones funcionan correctamente (AdminCrudTest)
 
+--------------------------------------------------------
+Iteración 9: Listado de prácticas con filtros y paginación
+
+Se modifica PracticaController.php para que ahora el index() en vez de devolver un get() sin filtros, devuelva un Request y filtros.
+
+También se actualiza index.blade.php para que use filtros y paginación.
+
+También añadimos un test en AdminCrudTest para comprobar el funcionamiento del filtro.
+
+
 
 
