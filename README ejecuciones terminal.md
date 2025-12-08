@@ -195,3 +195,28 @@ contraseña -> admin123
 Ahora cuando iniciamos sesion dependiendo del rol tendremos unos permisos específicos.
 
 Se creó también el fichero RolesTest.php en "tests/Feature/RolesTest.php" para hacer pruebas de diferentes casuisticas para comprobar que los permisos de los distintos roles funcionan de la forma esperada.
+
+--------------------------------------------------------
+Iteración 11: Mensajería
+
+Crear la migración para crear mensajes.
+
+php artisan make:migration create_mensajes_table
+
+Crear el modelo en app/Models/Mensaje.php
+
+Actualizar el modelo User para que acepte relaciones alumno/tutor y mensajería.
+
+Creamos el Request de mensajes que controla las relaciones que pueden tener mensajes entre sí:
+
+php artisan make:request MensajeRequest
+
+Creamos controlador para Mesanjes:
+
+php artisan make:controller MensajeController
+
+Creamos la carpeta mensaje en views, junto con sus respectivas páginas (create, index y show).
+
+Añadimos la ruta en web.php
+
+Añadimos un apartado de mensajería en welcome.blade.php 
