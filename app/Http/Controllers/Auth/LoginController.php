@@ -13,8 +13,9 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
+        // Si ya está autenticado, llévalo a la home (welcome)
         if (Auth::check()) {
-            return redirect()->route($this->redirectRouteFor(Auth::user()->role));
+            return redirect()->route('home');
         }
 
         return view('auth.login');
@@ -42,9 +43,8 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        $role = Auth::user()->role;
-
-        return redirect()->route($this->redirectRouteFor($role));
+        // Tras iniciar sesión, siempre a la home (welcome)
+        return redirect()->route('home');
     }
 
     /**
@@ -57,19 +57,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
-    }
-
-    /**
-     * Obtener la ruta de redirección según el rol.
-     */
-    protected function redirectRouteFor(string $role): string
-    {
-        return match ($role) {
-            'admin'  => 'admin.dashboard',
-            'alumno' => 'area.alumno',
-            'tutor'  => 'area.tutor',
-            default  => 'login',
-        };
+        return redirect()->route('home');
     }
 }

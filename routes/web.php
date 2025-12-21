@@ -6,9 +6,8 @@ use Illuminate\Support\Facades\Auth;
 // -------------------------------------------------------------------------------------------
 // Página de bienvenida
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'welcome')->name('home');          
+Route::view('/sesiones', 'sesiones')->name('sesiones'); 
 
 // -------------------------------------------------------------------------------------------
 // Sesión 2
