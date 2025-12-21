@@ -19,7 +19,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',       // 'admin', 'alumno', 'tutor'
+        'role',       // 'coordinador', 'alumno', 'tutor'
         'alumno_id',  
         'tutor_id',   
     ];
@@ -47,7 +47,7 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === 'coordinador';
     }
 
     public function isAlumno(): bool

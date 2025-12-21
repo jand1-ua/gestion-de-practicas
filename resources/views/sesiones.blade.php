@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Gestión de Prácticas de Alumnos</title>
+    <title>Sesiones · Gestión de Prácticas</title>
 
     <style>
         body {
@@ -21,24 +21,17 @@
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
-        h1 {
-            margin-top: 0;
-            margin-bottom: .25rem;
+        header{
+            display:flex;
+            align-items:flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
         }
-        h2 {
-            margin-top: 1.5rem;
-            margin-bottom: .4rem;
-        }
-        p {
-            margin: .25rem 0 .5rem;
-        }
-        ul {
-            margin: 0 0 .75rem 1rem;
-            padding-left: .5rem;
-        }
-        li {
-            margin: .15rem 0;
-        }
+        h1 { margin: 0 0 .25rem; }
+        h2 { margin-top: 1.6rem; margin-bottom: .35rem; }
+        p { margin: .25rem 0 .5rem; color:#555; }
+
         a {
             color: #c62828;
             text-decoration: none;
@@ -46,145 +39,177 @@
         a:hover {
             text-decoration: underline;
         }
-        code {
-            background: #eee;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: .9em;
-        }
-        footer {
-            margin-top: 2rem;
-            font-size: .8rem;
-            color: #666;
-        }
 
-        /* NUEVO: estilos de botones */
-        .actions {
-            margin-top: .8rem;
-            display: flex;
-            gap: .6rem;
-            flex-wrap: wrap;
-        }
         .btn {
-            display: inline-block;
+            display:inline-block;
             padding: .45rem .75rem;
             border: 1px solid #ccc;
             border-radius: 6px;
             background: #fff;
             cursor: pointer;
             font-size: .95rem;
+            text-decoration: none;
+            color: #222;
         }
-        .btn:hover {
-            background: #fafafa;
+        .btn:hover { background: #fafafa; }
+        .btn-primary { border-color: #c62828; color: #c62828; }
+
+        section { margin-top: 1.2rem; }
+        ul { margin: .25rem 0 .75rem 1rem; }
+        li { margin: .15rem 0; }
+
+        footer { margin-top: 2rem; font-size: .85rem; color: #666; }
+
+        code {
+            background: #eee;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: .9em;
         }
-        .btn-primary {
-            border-color: #c62828;
-            color: #c62828;
+
+        .meta {
+            font-size: .95rem;
+            color:#555;
+            margin-top: .25rem;
+        }
+        .meta a { margin-left: .35rem; }
+        .actions {
+            display:flex;
+            gap:.6rem;
+            flex-wrap:wrap;
+        }
+        .inline {
+            display:inline;
+            margin: 0;
         }
     </style>
 </head>
 <body>
 <main>
-    <header>
-        <h1>Gestión de Prácticas de Alumnos</h1>
-        <p>Aplicación de ejemplo para las sesiones de PHP y Laravel.</p>
-        <p style="font-size: .9rem; color:#555;">
-            Desde esta página puedes acceder rápidamente a los ejemplos de cada sesión.
-        </p>
+    @php use Illuminate\Support\Facades\Auth; @endphp
 
-        {{-- NUEVO: botón para ir a la welcome (home) --}}
+    <header>
+        <div>
+            <h1>Sesiones</h1>
+            <p>Índice del proyecto (hasta Sesión 11: mensajería interna).</p>
+
+            @if (Auth::check())
+                <div class="meta">
+                    Sesión iniciada como <strong>{{ Auth::user()->name }}</strong>
+                    (rol: <code>{{ Auth::user()->role }}</code>).
+                    @if (Auth::user()->role === 'coordinador')
+                        <a href="{{ route('admin.dashboard') }}">Ir al panel de coordinador</a>
+                    @elseif (Auth::user()->role === 'alumno')
+                        <a href="{{ route('area.alumno') }}">Ir a mi área de alumno</a>
+                    @elseif (Auth::user()->role === 'tutor')
+                        <a href="{{ route('area.tutor') }}">Ir a mi área de tutor</a>
+                    @endif
+                </div>
+            @endif
+        </div>
+
         <div class="actions">
             <a class="btn btn-primary" href="{{ route('home') }}">Ir a inicio</a>
+
+            @if (Auth::check())
+                <form class="inline" action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button class="btn" type="submit">Cerrar sesión</button>
+                </form>
+            @else
+                <a class="btn" href="{{ route('login') }}">Login</a>
+            @endif
         </div>
     </header>
 
-    @php use Illuminate\Support\Facades\Auth; @endphp
-
-    @if (Auth::check())
-        <p style="font-size:.9rem; color:#555;">
-            Sesión iniciada como <strong>{{ Auth::user()->name }}</strong>
-            (rol: {{ Auth::user()->role }}).
-            @if (Auth::user()->role === 'admin')
-                <a href="{{ route('admin.dashboard') }}">Ir al panel de administración</a>
-            @elseif (Auth::user()->role === 'alumno')
-                <a href="{{ route('area.alumno') }}">Ir a mi área de alumno</a>
-            @elseif (Auth::user()->role === 'tutor')
-                <a href="{{ route('area.tutor') }}">Ir a mi área de tutor</a>
-            @endif
-        </p>
-        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-            @csrf
-            <button class="btn" type="submit">Cerrar sesión</button>
-        </form>
-    @else
-        <p style="font-size:.9rem; color:#555;">
-            <a href="{{ route('login') }}">Iniciar sesión</a>
-        </p>
-    @endif
-
-    {{-- Sesión 1 --}}
     <section>
-        <h2>Sesión 1 – PHP básico (CLI)</h2>
-        <p>
-            Ejemplos de arrays, programación orientada a objetos y namespaces ejecutados por consola.
-        </p>
+        <h2>Sesión 2 – Laravel básico (datos en memoria)</h2>
         <ul>
-            <li>Carpeta: <code>sesion_1</code> (subcarpetas <code>arrays</code>, <code>poo</code>, <code>namespaces</code>).</li>
-            <li>Ejemplo: <code>php sesion_1/arrays/demo_listados.php</code></li>
+            <li><a href="{{ route('demo.alumnos') }}">Demo: alumnos (memoria)</a></li>
+            <li><a href="{{ route('demo.practicas') }}">Demo: prácticas (memoria)</a></li>
         </ul>
     </section>
 
-    {{-- Sesión 2 --}}
-    <section>
-        <h2>Sesión 2 – Laravel básico</h2>
-        <p>Rutas, controladores y vistas usando datos en memoria.</p>
-        <ul>
-            <li><a href="{{ url('/demo/alumnos') }}">Demo: listado de alumnos (en memoria)</a></li>
-            <li><a href="{{ url('/demo/practicas') }}">Demo: listado de prácticas (en memoria)</a></li>
-        </ul>
-    </section>
-
-    {{-- Sesión 3 --}}
     <section>
         <h2>Sesión 3 – Acceso a datos (Query Builder)</h2>
-        <p>Base de datos MySQL, migraciones, seeders y consultas con Query Builder.</p>
         <ul>
-            <li><a href="{{ route('db.alumnos') }}">Listado de alumnos desde la base de datos</a></li>
-            <li><a href="{{ route('db.practicas') }}">Listado de prácticas (joins alumno, empresa, tutor)</a></li>
+            <li><a href="{{ route('db.alumnos') }}">Alumnos desde BD</a></li>
+            <li><a href="{{ route('db.practicas') }}">Prácticas (joins)</a></li>
         </ul>
     </section>
 
-    {{-- Sesión 4 --}}
     <section>
-        <h2>Sesión 4 – Eloquent ORM y relaciones</h2>
-        <p>Mapeo objeto–relacional de Alumno, Empresa, Tutor y Práctica con Eloquent.</p>
+        <h2>Sesión 4 – Eloquent ORM</h2>
         <ul>
-            <li><a href="{{ route('eloquent.alumnos') }}">Alumnos con número de prácticas (Eloquent)</a></li>
-            <li><a href="{{ route('eloquent.practicas') }}">Prácticas con sus relaciones (Eloquent)</a></li>
+            <li><a href="{{ route('eloquent.alumnos') }}">Alumnos (Eloquent)</a></li>
+            <li><a href="{{ route('eloquent.practicas') }}">Prácticas (Eloquent)</a></li>
         </ul>
     </section>
 
-    {{-- Administración --}}
     <section>
-        <h2>Coordinación de Prácticas</h2>
+        <h2>Sesión 5 – CRUD alumnos</h2>
         <ul>
             <li><a href="{{ route('admin.alumnos.index') }}">Gestión de alumnos</a></li>
-            <li><a href="{{ route('admin.empresas.index') }}">Gestión de empresas</a></li>
-            <li><a href="{{ route('admin.tutores.index') }}">Gestión de tutores</a></li>
-            <li><a href="{{ route('admin.practicas.index') }}">Gestión de prácticas</a></li>
         </ul>
     </section>
 
-    {{-- Mensajería interna --}}
     <section>
-        <h2>Mensajería interna</h2>
-        <p>Comunicación entre administradores, alumnos y tutores dentro de la plataforma.</p>
+        <h2>Sesión 6 – CRUD empresas y tutores</h2>
+        <ul>
+            <li><a href="{{ route('admin.empresas.index') }}">Empresas</a></li>
+            <li><a href="{{ route('admin.tutores.index') }}">Tutores</a></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Sesión 7 – CRUD prácticas</h2>
+        <ul>
+            <li><a href="{{ route('admin.practicas.index') }}">Prácticas</a></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Sesión 8 – Validación y tests</h2>
+        <ul>
+            <li><code>tests/Feature</code> · <code>tests/Unit</code></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Sesión 9 – Filtros de prácticas</h2>
+        <ul>
+            <li>Parámetros GET y consultas dinámicas</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Sesión 10 – Autenticación y roles</h2>
+        <p>Login, logout, middleware por roles y áreas privadas.</p>
+        <ul>
+            <li>Roles: <code>coordinador</code>, <code>alumno</code>, <code>tutor</code></li>
+            <li><a href="{{ route('login') }}">Iniciar sesión</a></li>
+            <li><a href="{{ route('area.coordinador') }}">Área coordinador</a></li>
+            <li><a href="{{ route('area.alumno') }}">Área alumno</a></li>
+            <li><a href="{{ route('area.tutor') }}">Área tutor</a></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Sesión 11 – Mensajería interna</h2>
+        <p>Comunicación entre coordinadores, alumnos y tutores dentro de la plataforma.</p>
         <ul>
             <li>
                 @if (Auth::check())
                     <a href="{{ route('mensajes.index') }}">Ir a mi bandeja de mensajes</a>
                 @else
                     Debes <a href="{{ route('login') }}">iniciar sesión</a> para acceder a la mensajería.
+                @endif
+            </li>
+            <li>
+                @if (Auth::check())
+                    <a href="{{ route('mensajes.create') }}">Redactar un mensaje</a>
+                @else
+                    (Disponible tras iniciar sesión)
                 @endif
             </li>
         </ul>

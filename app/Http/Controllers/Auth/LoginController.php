@@ -13,9 +13,21 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        // Si ya está autenticado, llévalo a la home (welcome)
         if (Auth::check()) {
-            return redirect()->route('home');
+            $route = $this->redirectRouteFor(Auth::user()->role);
+
+            // Si el rol no está reconocido, evitamos bucle: cerramos sesión y mostramos login
+            if ($route === 'login') {
+                Auth::logout();
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
+
+                return view('auth.login')->withErrors([
+                    'email' => 'Tu rol no está configurado correctamente. Contacta con el coordinador.'
+                ]);
+            }
+
+            return redirect()->route($route);
         }
 
         return view('auth.login');
@@ -35,16 +47,27 @@ class LoginController extends Controller
 
         if (! Auth::attempt($credentials, $remember)) {
             return back()
-                ->withErrors([
-                    'email' => 'Las credenciales no son válidas.',
-                ])
+                ->withErrors(['email' => 'Las credenciales no son válidas.'])
                 ->withInput($request->only('email'));
         }
 
         $request->session()->regenerate();
 
-        // Tras iniciar sesión, siempre a la home (welcome)
-        return redirect()->route('home');
+        $role = Auth::user()->role;
+        $route = $this->redirectRouteFor($role);
+
+        // Si el rol no está reconocido, evitamos bucle y damos feedback
+        if ($route === 'login') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Tu rol no está configurado correctamente. Contacta con el coordinador.'
+            ]);
+        }
+
+        return redirect()->route($route);
     }
 
     /**
@@ -58,5 +81,10 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home');
+    }
+
+    protected function redirectRouteFor(string $role): string
+    {
+        return 'home';
     }
 }

@@ -197,7 +197,7 @@
             <div class="logo" aria-hidden="true"></div>
             <div>
                 <h1>Gestión de Prácticas</h1>
-                <p>Plataforma académica · alumnos, tutores y administración</p>
+                <p>Plataforma académica · alumnos, tutores y coordinadores</p>
             </div>
         </div>
 
@@ -207,8 +207,8 @@
             @if ($user)
                 <a class="btn" href="{{ route('mensajes.index') }}">Mensajería</a>
 
-                @if ($user->role === 'admin')
-                    <a class="btn btn-primary" href="{{ route('admin.dashboard') }}">Panel admin</a>
+                @if ($user->role === 'coordinador')
+                    <a class="btn btn-primary" href="{{ route('admin.dashboard') }}">Panel coordinador</a>
                 @elseif ($user->role === 'alumno')
                     <a class="btn btn-primary" href="{{ route('area.alumno') }}">Mi área (alumno)</a>
                 @elseif ($user->role === 'tutor')
@@ -238,7 +238,7 @@
                 <a class="btn btn-primary" href="{{ route('sesiones') }}">Ir a sesiones / ejemplos</a>
 
                 @if ($user)
-                    @if ($user->role === 'admin')
+                    @if ($user->role === 'coordinador')
                         <a class="btn" href="{{ route('admin.practicas.index') }}">Gestionar prácticas</a>
                     @elseif ($user->role === 'alumno')
                         <a class="btn" href="{{ route('area.alumno') }}">Ver mi área</a>
@@ -257,7 +257,7 @@
                 </div>
                 <div class="card">
                     <h3>Seguimiento por rol</h3>
-                    <p>Accesos y acciones adaptados a administración, alumno y tutor.</p>
+                    <p>Accesos y acciones adaptados a coordinador, alumno y tutor.</p>
                 </div>
                 <div class="card">
                     <h3>Mensajería interna</h3>
@@ -277,7 +277,7 @@
                 </div>
 
                 <div class="quick">
-                    @if ($user->role === 'admin')
+                    @if ($user->role === 'coordinador')
                         <a class="btn" href="{{ route('admin.alumnos.index') }}">Gestión de alumnos <span class="muted">→</span></a>
                         <a class="btn" href="{{ route('admin.empresas.index') }}">Gestión de empresas <span class="muted">→</span></a>
                         <a class="btn" href="{{ route('admin.tutores.index') }}">Gestión de tutores <span class="muted">→</span></a>
@@ -306,7 +306,7 @@
                 </div>
 
                 <div class="hint">
-                    Si no tienes credenciales, solicita al administrador que cree tu cuenta o habilite tu acceso.
+                    Si no tienes credenciales, solicita al coordinador que cree tu cuenta o habilite tu acceso.
                 </div>
             @endif
         </aside>
