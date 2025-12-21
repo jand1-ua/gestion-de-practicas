@@ -14,7 +14,20 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route($this->redirectRouteFor(Auth::user()->role));
+            $route = $this->redirectRouteFor(Auth::user()->role);
+
+            // Si el rol no está reconocido, evitamos bucle: cerramos sesión y mostramos login
+            if ($route === 'login') {
+                Auth::logout();
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
+
+                return view('auth.login')->withErrors([
+                    'email' => 'Tu rol no está configurado correctamente. Contacta con el coordinador.'
+                ]);
+            }
+
+            return redirect()->route($route);
         }
 
         return view('auth.login');
@@ -34,17 +47,27 @@ class LoginController extends Controller
 
         if (! Auth::attempt($credentials, $remember)) {
             return back()
-                ->withErrors([
-                    'email' => 'Las credenciales no son válidas.',
-                ])
+                ->withErrors(['email' => 'Las credenciales no son válidas.'])
                 ->withInput($request->only('email'));
         }
 
         $request->session()->regenerate();
 
         $role = Auth::user()->role;
+        $route = $this->redirectRouteFor($role);
 
-        return redirect()->route($this->redirectRouteFor($role));
+        // Si el rol no está reconocido, evitamos bucle y damos feedback
+        if ($route === 'login') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Tu rol no está configurado correctamente. Contacta con el coordinador.'
+            ]);
+        }
+
+        return redirect()->route($route);
     }
 
     /**
@@ -57,19 +80,11 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('home');
     }
 
-    /**
-     * Obtener la ruta de redirección según el rol.
-     */
     protected function redirectRouteFor(string $role): string
     {
-        return match ($role) {
-            'admin'  => 'admin.dashboard',
-            'alumno' => 'area.alumno',
-            'tutor'  => 'area.tutor',
-            default  => 'login',
-        };
+        return 'home';
     }
 }

@@ -7,149 +7,196 @@
     <title>Gestión de Prácticas de Alumnos</title>
 
     <style>
-        body {
-            margin: 0;
+        :root{
+            --bg: #0b1220;
+            --card: rgba(255,255,255,.08);
+            --text: rgba(255,255,255,.92);
+            --muted: rgba(255,255,255,.70);
+            --line: rgba(255,255,255,.14);
+            --accent: #c62828;
+            --accent2: #ef4444;
+        }
+        *{ box-sizing:border-box; }
+        body{
+            margin:0;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: #f5f5f5;
-            color: #222;
+            color: var(--text);
+            background:
+                radial-gradient(1200px 600px at 15% 10%, rgba(198,40,40,.35), transparent 60%),
+                radial-gradient(900px 500px at 85% 25%, rgba(239,68,68,.22), transparent 55%),
+                linear-gradient(180deg, #070b14, var(--bg));
+            min-height: 100vh;
         }
-        main {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 24px 20px 32px;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        .wrap{ max-width: 1120px; margin: 0 auto; padding: 34px 20px 60px; }
+
+        .topbar{
+            display:flex; align-items:center; justify-content:space-between; gap: 12px;
+            padding: 14px 16px;
+            border:1px solid var(--line);
+            border-radius: 14px;
+            background: rgba(255,255,255,.04);
         }
-        h1 {
-            margin-top: 0;
-            margin-bottom: .25rem;
+        .brand{ display:flex; align-items:center; gap: 10px; }
+        .logo{
+            width: 36px; height: 36px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
         }
-        h2 {
-            margin-top: 1.5rem;
-            margin-bottom: .4rem;
-        }
-        p {
-            margin: .25rem 0 .5rem;
-        }
-        ul {
-            margin: 0 0 .75rem 1rem;
-            padding-left: .5rem;
-        }
-        li {
-            margin: .15rem 0;
-        }
-        a {
-            color: #c62828;
+        .brand h1{ margin:0; font-size: 14px; }
+        .brand p{ margin:0; font-size: 12px; color: var(--muted); }
+
+        .btn{
+            display:inline-flex; align-items:center; justify-content:center;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border:1px solid var(--line);
+            background: rgba(255,255,255,.04);
+            color: var(--text);
+            font-size: 13px;
             text-decoration: none;
+            cursor: pointer;
+            white-space: nowrap;
         }
-        a:hover {
-            text-decoration: underline;
+        .btn:hover{ background: rgba(255,255,255,.07); }
+        .btn-primary{
+            border-color: rgba(198,40,40,.55);
+            background: rgba(198,40,40,.18);
         }
-        code {
-            background: #eee;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-size: .9em;
+        .btn-primary:hover{ background: rgba(198,40,40,.26); }
+
+        .hero{
+            margin-top: 22px;
+            padding: 22px 20px;
+            border-radius: 18px;
+            border:1px solid var(--line);
+            background: rgba(255,255,255,.04);
         }
-        footer {
-            margin-top: 2rem;
-            font-size: .8rem;
-            color: #666;
+        .hero h2{
+            margin: 0 0 8px;
+            font-size: 30px;
+            letter-spacing: -0.3px;
+            line-height: 1.15;
+        }
+        .hero p{
+            margin: 0 0 14px;
+            color: var(--muted);
+            line-height: 1.6;
+            max-width: 90ch;
+        }
+        .cta{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+
+        .grid{
+            margin-top: 14px;
+            display:grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 900px){
+            .grid{ grid-template-columns: 1fr; }
+        }
+        .card{
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,.08);
+            padding: 14px 14px 12px;
+        }
+        .card h3{ margin:0 0 6px; font-size: 14px; }
+        .card p{ margin:0; font-size: 13px; color: var(--muted); line-height: 1.45; }
+        code{
+            background: rgba(255,255,255,.10);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: .92em;
+        }
+
+        footer{
+            margin-top: 22px;
+            color: rgba(255,255,255,.55);
+            font-size: 12px;
+            display:flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
         }
     </style>
 </head>
 <body>
-<main>
-    <header>
-        <h1>Gestión de Prácticas de Alumnos</h1>
-        <p>Aplicación de ejemplo para las sesiones de PHP y Laravel.</p>
-        <p style="font-size: .9rem; color:#555;">
-            Desde esta página puedes acceder rápidamente a los ejemplos de cada sesión.
-        </p>
-    </header>
+<div class="wrap">
 
     @php use Illuminate\Support\Facades\Auth; @endphp
 
-    @if (Auth::check())
-        <p style="font-size:.9rem; color:#555;">
-            Sesión iniciada como <strong>{{ Auth::user()->name }}</strong>
-            (rol: {{ Auth::user()->role }}).
-            @if (Auth::user()->role === 'admin')
-                <a href="{{ route('admin.dashboard') }}">Ir al panel de administración</a>
-            @elseif (Auth::user()->role === 'alumno')
-                <a href="{{ route('area.alumno') }}">Ir a mi área de alumno</a>
-            @elseif (Auth::user()->role === 'tutor')
-                <a href="{{ route('area.tutor') }}">Ir a mi área de tutor</a>
+    <div class="topbar">
+        <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <div>
+                <h1>Gestión de Prácticas</h1>
+                <p>Sesión 10 · Autenticación y roles</p>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <a class="btn" href="{{ route('sesiones') }}">Sesiones</a>
+
+            @if (Auth::check())
+                <span class="btn" style="cursor:default;">
+                    {{ Auth::user()->name }} · {{ Auth::user()->role }}
+                </span>
+
+                @if (Auth::user()->role === 'coordinador')
+                    <a class="btn btn-primary" href="{{ route('admin.dashboard') }}">Panel (Coordinación)</a>
+                @elseif (Auth::user()->role === 'alumno')
+                    <a class="btn btn-primary" href="{{ route('area.alumno') }}">Área alumno</a>
+                @elseif (Auth::user()->role === 'tutor')
+                    <a class="btn btn-primary" href="{{ route('area.tutor') }}">Área tutor</a>
+                @endif
+
+                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button class="btn" type="submit">Cerrar sesión</button>
+                </form>
+            @else
+                <a class="btn btn-primary" href="{{ route('login') }}">Iniciar sesión</a>
             @endif
-        </p>
-        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-            @csrf
-            <button type="submit">Cerrar sesión</button>
-        </form>
-    @else
-        <p style="font-size:.9rem; color:#555;">
-            <a href="{{ route('login') }}">Iniciar sesión</a>
-        </p>
-    @endif
+        </div>
+    </div>
 
-
-    {{-- Sesión 1 --}}
-    <section>
-        <h2>Sesión 1 – PHP básico (CLI)</h2>
+    <section class="hero">
+        <h2>Bienvenido</h2>
         <p>
-            Ejemplos de arrays, programación orientada a objetos y namespaces ejecutados por consola.
+            En esta sesión se incorpora autenticación y control de acceso por roles.
         </p>
-        <ul>
-            <li>Carpeta: <code>sesion_1</code> (subcarpetas <code>arrays</code>, <code>poo</code>, <code>namespaces</code>).</li>
-            <li>Ejemplo: <code>php sesion_1/arrays/demo_listados.php</code></li>
-        </ul>
-    </section>
 
-    {{-- Sesión 2 --}}
-    <section>
-        <h2>Sesión 2 – Laravel básico</h2>
-        <p>Rutas, controladores y vistas usando datos en memoria.</p>
-        <ul>
-            <li><a href="{{ url('/demo/alumnos') }}">Demo: listado de alumnos (en memoria)</a></li>
-            <li><a href="{{ url('/demo/practicas') }}">Demo: listado de prácticas (en memoria)</a></li>
-        </ul>
-    </section>
+        <div class="cta">
+            <a class="btn btn-primary" href="{{ route('sesiones') }}">Ir al índice de sesiones</a>
 
-    {{-- Sesión 3 --}}
-    <section>
-        <h2>Sesión 3 – Acceso a datos (Query Builder)</h2>
-        <p>Base de datos MySQL, migraciones, seeders y consultas con Query Builder.</p>
-        <ul>
-            <li><a href="{{ route('db.alumnos') }}">Listado de alumnos desde la base de datos</a></li>
-            <li><a href="{{ route('db.practicas') }}">Listado de prácticas (joins alumno, empresa, tutor)</a></li>
-        </ul>
-    </section>
+            @if (Auth::check() && Auth::user()->role === 'coordinador')
+                <a class="btn" href="{{ route('admin.practicas.index') }}">Gestionar prácticas</a>
+                <a class="btn" href="{{ route('admin.alumnos.index') }}">Gestionar alumnos</a>
+                <a class="btn" href="{{ route('admin.empresas.index') }}">Gestionar empresas</a>
+                <a class="btn" href="{{ route('admin.tutores.index') }}">Gestionar tutores</a>
+            @endif
+        </div>
 
-    {{-- Sesión 4 --}}
-    <section>
-        <h2>Sesión 4 – Eloquent ORM y relaciones</h2>
-        <p>Mapeo objeto–relacional de Alumno, Empresa, Tutor y Práctica con Eloquent.</p>
-        <ul>
-            <li><a href="{{ route('eloquent.alumnos') }}">Alumnos con número de prácticas (Eloquent)</a></li>
-            <li><a href="{{ route('eloquent.practicas') }}">Prácticas con sus relaciones (Eloquent)</a></li>
-        </ul>
-    </section>
-
-    <section>
-    <h2>Administración</h2>
-    <ul>
-        <li><a href="{{ route('admin.alumnos.index') }}">Gestión de alumnos</a></li>
-        <li><a href="{{ route('admin.empresas.index') }}">Gestión de empresas</a></li>
-        <li><a href="{{ route('admin.tutores.index') }}">Gestión de tutores</a></li>
-        <li><a href="{{ route('admin.practicas.index') }}">Gestión de prácticas</a></li>
-    </ul>
+        <div class="grid">
+            <div class="card">
+                <h3>Login / Logout</h3>
+                <p>Inicio y cierre de sesión con regeneración de sesión.</p>
+            </div>
+            <div class="card">
+                <h3>Roles</h3>
+                <p>Acceso por rol: <code>coordinador</code>, <code>alumno</code>, <code>tutor</code>.</p>
+            </div>
+            <div class="card">
+                <h3>Middleware</h3>
+                <p>Protección de rutas con <code>auth</code> y <code>role:*</code>.</p>
+            </div>
+        </div>
     </section>
 
     <footer>
-        Gestión de Prácticas · Laravel v{{ Illuminate\Foundation\Application::VERSION }}
-        (PHP v{{ PHP_VERSION }})
+        <div>Laravel v{{ Illuminate\Foundation\Application::VERSION }} · PHP v{{ PHP_VERSION }}</div>
+        <div>Home (welcome) · Sesión 10</div>
     </footer>
-</main>
+
+</div>
 </body>
 </html>
