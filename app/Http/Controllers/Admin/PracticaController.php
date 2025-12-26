@@ -66,6 +66,12 @@ class PracticaController extends Controller
 
     public function destroy(Practica $practica)
     {
+        if ($practica->estado === 'en_curso') {
+            return redirect()
+                ->route('admin.practicas.index')
+                ->with('error', 'No se puede eliminar una práctica que está en curso.');
+        }
+
         $practica->delete();
 
         return redirect()
