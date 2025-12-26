@@ -110,7 +110,7 @@ class MensajeController extends Controller
         $validated = $request->validate([
             'destinatario_id' => ['required', 'exists:users,id', 'not_in:'.$usuario->id],
             'asunto'          => ['nullable', 'string', 'max:255'],
-            'cuerpo'          => ['required', 'string'],
+            'Mensaje'          => ['required', 'string'],
         ]);
 
         $destinatario = User::findOrFail($validated['destinatario_id']);
