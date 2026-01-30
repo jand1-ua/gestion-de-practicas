@@ -40,17 +40,17 @@ class MensajeController extends Controller
         $usuario = Auth::user();
         $destinatarioId = $request->query('destinatario_id'); // usado al responder
 
-        if ($usuario->role === 'admin') {
+        if ($usuario->role === 'coordinador') {
 
-            // Admin puede escribir a cualquiera menos a sí mismo
+            // Coordinador puede escribir a cualquiera menos a sí mismo
             $destinatarios = User::where('id', '!=', $usuario->id)
                 ->orderBy('name')
                 ->get();
 
         } elseif ($usuario->role === 'alumno') {
 
-            // Admins
-            $admins = User::where('role', 'admin')->get();
+            
+            $coordinadores = User::where('role', 'coordinador')->get();
 
             // Tutores con los que el alumno tiene alguna práctica
             $tutorIds = Practica::where('alumno_id', $usuario->alumno_id)
@@ -63,15 +63,14 @@ class MensajeController extends Controller
                 ? collect()
                 : User::whereIn('tutor_id', $tutorIds)->get();
 
-            $destinatarios = $admins->merge($tutores)
+            $destinatarios = $coordinadores->merge($tutores)
                 ->where('id', '!=', $usuario->id)
                 ->unique('id')
                 ->values();
 
         } elseif ($usuario->role === 'tutor') {
 
-            // Admins
-            $admins = User::where('role', 'admin')->get();
+            $coordinadores = User::where('role', 'coordinador')->get();
 
             // Alumnos con los que el tutor tiene alguna práctica
             $alumnoIds = Practica::where('tutor_id', $usuario->tutor_id)
@@ -83,14 +82,14 @@ class MensajeController extends Controller
                 ? collect()
                 : User::whereIn('alumno_id', $alumnoIds)->get();
 
-            $destinatarios = $admins->merge($alumnos)
+            $destinatarios = $coordinadores->merge($alumnos)
                 ->where('id', '!=', $usuario->id)
                 ->unique('id')
                 ->values();
 
         } else {
-            // Cualquier otro rol: sólo permitir admins
-            $destinatarios = User::where('role', 'admin')
+            // Cualquier otro rol: sólo permitir coordinadores
+            $destinatarios = User::where('role', 'coordinador')
                 ->where('id', '!=', $usuario->id)
                 ->orderBy('name')
                 ->get();
@@ -111,7 +110,7 @@ class MensajeController extends Controller
         $validated = $request->validate([
             'destinatario_id' => ['required', 'exists:users,id', 'not_in:'.$usuario->id],
             'asunto'          => ['nullable', 'string', 'max:255'],
-            'cuerpo'          => ['required', 'string'],
+            'Mensaje'          => ['required', 'string'],
         ]);
 
         $destinatario = User::findOrFail($validated['destinatario_id']);

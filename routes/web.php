@@ -4,71 +4,64 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 // -------------------------------------------------------------------------------------------
-// Página de bienvenida
+// Home + índice de sesiones
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'welcome')->name('home');
+Route::view('/sesiones', 'sesiones')->name('sesiones');
 
 // -------------------------------------------------------------------------------------------
-// Sesión 2
+// Sesión 2 – Laravel básico
 
 use App\Http\Controllers\DemoPracticasController;
 
-Route::get('/demo/alumnos', [DemoPracticasController::class, 'alumnos']);
-Route::get('/demo/practicas', [DemoPracticasController::class, 'practicas']);
+Route::get('/demo/alumnos', [DemoPracticasController::class, 'alumnos'])->name('demo.alumnos');
+Route::get('/demo/practicas', [DemoPracticasController::class, 'practicas'])->name('demo.practicas');
 
 // -------------------------------------------------------------------------------------------
-// Sesión 3
+// Sesión 3 – Acceso a datos (Query Builder)
 
 use App\Http\Controllers\DbPracticasController;
 
-Route::get('/db/alumnos', [DbPracticasController::class, 'alumnos'])
-    ->name('db.alumnos');
-
-Route::get('/db/practicas', [DbPracticasController::class, 'practicas'])
-    ->name('db.practicas');
+Route::get('/db/alumnos', [DbPracticasController::class, 'alumnos'])->name('db.alumnos');
+Route::get('/db/practicas', [DbPracticasController::class, 'practicas'])->name('db.practicas');
 
 // -------------------------------------------------------------------------------------------
-// Sesión 4
+// Sesión 4 – Eloquent ORM y relaciones
 
 use App\Http\Controllers\EloquentPracticasController;
 
-Route::get('/eloquent/alumnos', [EloquentPracticasController::class, 'alumnos'])
-    ->name('eloquent.alumnos');
-
-Route::get('/eloquent/practicas', [EloquentPracticasController::class, 'practicas'])
-    ->name('eloquent.practicas');
+Route::get('/eloquent/alumnos', [EloquentPracticasController::class, 'alumnos'])->name('eloquent.alumnos');
+Route::get('/eloquent/practicas', [EloquentPracticasController::class, 'practicas'])->name('eloquent.practicas');
 
 // -------------------------------------------------------------------------------------------
-// Sesiones 5, 6 y 7 – Zona de administración (solo rol admin)
+// Sesiones 5, 6 y 7 – Zona de coordinación (solo rol coordinador)
 
 use App\Http\Controllers\Admin\AlumnoController as AdminAlumnoController;
 use App\Http\Controllers\Admin\EmpresaController as AdminEmpresaController;
 use App\Http\Controllers\Admin\TutorController as AdminTutorController;
 use App\Http\Controllers\Admin\PracticaController;
 
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', 'role:coordinador'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
         Route::get('/', function () {
-            // Pequeño “dashboard” de admin
+            // Dashboard de coordinador
             return redirect()->route('admin.practicas.index');
         })->name('dashboard');
 
-        // Alumnos (iteración 5)
+        // CRUD alumnos
         Route::resource('alumnos', AdminAlumnoController::class);
 
-        // Empresas (iteración 6)
+        // CRUD empresas
         Route::resource('empresas', AdminEmpresaController::class);
 
-        // Tutores (iteración 6)
+        // CRUD tutores
         Route::resource('tutores', AdminTutorController::class)
             ->parameters(['tutores' => 'tutor']);
 
-        // Prácticas (iteraciones 6–8)
+        // CRUD prácticas
         Route::resource('practicas', PracticaController::class)
             ->names('practicas');
     });
@@ -79,14 +72,9 @@ Route::middleware(['auth', 'role:admin'])
 use App\Http\Controllers\Auth\LoginController;
 
 // login / logout
-Route::get('/login', [LoginController::class, 'showLoginForm'])
-    ->name('login');
-
-Route::post('/login', [LoginController::class, 'login'])
-    ->name('login.post');
-
-Route::post('/logout', [LoginController::class, 'logout'])
-    ->name('logout');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Área de alumno
 Route::middleware(['auth', 'role:alumno'])
@@ -108,6 +96,12 @@ Route::middleware(['auth', 'role:tutor'])
     })
     ->name('area.tutor');
 
+// Área de coordinador (opcional: redirige al dashboard)
+Route::middleware(['auth', 'role:coordinador'])
+    ->get('/area/coordinador', function () {
+        return redirect()->route('admin.dashboard');
+    })
+    ->name('area.coordinador');
 
 // -----------------------------------------------------------------------------
 // Mensajería interna (Sesión 11 / Iteración final)

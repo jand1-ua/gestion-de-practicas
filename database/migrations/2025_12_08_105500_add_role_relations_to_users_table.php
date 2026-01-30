@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             // Rol del usuario en el sistema: admin, alumno, tutor
             $table->string('role', 20)
-                  ->default('admin')
+                  ->default('coordinador')
                   ->after('password');
 
             // Relación opcional con alumno
