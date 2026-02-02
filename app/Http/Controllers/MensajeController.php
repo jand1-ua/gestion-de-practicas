@@ -38,7 +38,7 @@ class MensajeController extends Controller
     public function create(Request $request)
     {
         $usuario = Auth::user();
-        $destinatarioId = $request->query('destinatario_id'); // usado al responder
+        $destinatarioId = $request->query('destinatario_id');
 
         if ($usuario->role === 'coordinador') {
 
@@ -49,7 +49,6 @@ class MensajeController extends Controller
 
         } elseif ($usuario->role === 'alumno') {
 
-            
             $coordinadores = User::where('role', 'coordinador')->get();
 
             // Tutores con los que el alumno tiene alguna práctica
@@ -108,9 +107,9 @@ class MensajeController extends Controller
         $usuario = Auth::user();
 
         $validated = $request->validate([
-            'destinatario_id' => ['required', 'exists:users,id', 'not_in:'.$usuario->id],
+            'destinatario_id' => ['required', 'exists:users,id', 'not_in:' . $usuario->id],
             'asunto'          => ['nullable', 'string', 'max:255'],
-            'Mensaje'          => ['required', 'string'],
+            'cuerpo'          => ['required', 'string'],
         ]);
 
         $destinatario = User::findOrFail($validated['destinatario_id']);

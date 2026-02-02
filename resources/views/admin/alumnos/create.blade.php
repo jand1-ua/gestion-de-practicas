@@ -1,21 +1,31 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Nuevo alumno</title>
-</head>
-<body>
-<h1>Nuevo alumno</h1>
+@extends('layouts.app')
 
-<p>
-    <a href="{{ route('admin.alumnos.index') }}">Volver al listado</a>
-</p>
+@section('title', 'Nuevo alumno · Panel coordinador')
 
-<form action="{{ route('admin.alumnos.store') }}" method="POST">
-    @include('admin.alumnos._form')
-    <div style="margin-top: 12px;">
-        <button type="submit">Guardar</button>
+@section('content')
+@include('partials.admin-subnav')
+
+<div class="pagehead">
+    <div>
+        <h2>Nuevo alumno</h2>
+        <p>Alta de un alumno en el sistema.</p>
     </div>
-</form>
-</body>
-</html>
+
+    <div class="actions">
+        <a class="btn" href="{{ route('admin.alumnos.index') }}">Volver al listado</a>
+    </div>
+</div>
+
+@include('partials.validation-errors')
+
+<div class="card">
+    <form class="form" method="POST" action="{{ route('admin.alumnos.store') }}">
+        @include('admin.alumnos._form')
+
+        <div class="actions">
+            <button class="btn btn-primary" type="submit">Guardar</button>
+            <a class="btn" href="{{ route('admin.alumnos.index') }}">Cancelar</a>
+        </div>
+    </form>
+</div>
+@endsection

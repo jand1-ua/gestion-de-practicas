@@ -1,22 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Nueva práctica</title>
-</head>
-<body>
-<h1>Crear nueva práctica</h1>
+@extends('layouts.app')
 
-<p>
-    <a href="{{ route('admin.practicas.index') }}">Volver al listado</a>
-</p>
+@section('title', 'Nueva práctica · Panel coordinador')
 
-<form action="{{ route('admin.practicas.store') }}" method="POST">
-    @csrf
+@section('content')
+@include('partials.admin-subnav')
 
-    {{-- En create no tenemos todavía $practica, se la pasamos como null --}}
-    @include('admin.practicas._form', ['practica' => null])
-</form>
+<div class="pagehead">
+    <div>
+        <h2>Nueva práctica</h2>
+        <p>Asigna un alumno a una empresa y un tutor para un periodo concreto.</p>
+    </div>
 
-</body>
-</html>
+    <div class="actions">
+        <a class="btn" href="{{ route('admin.practicas.index') }}">Volver al listado</a>
+    </div>
+</div>
+
+@include('partials.validation-errors')
+
+<div class="card">
+    <form class="form" method="POST" action="{{ route('admin.practicas.store') }}">
+        @include('admin.practicas._form', [
+            'alumnos' => $alumnos,
+            'empresas' => $empresas,
+            'tutores' => $tutores,
+        ])
+
+        <div class="actions">
+            <button class="btn btn-primary" type="submit">Guardar</button>
+            <a class="btn" href="{{ route('admin.practicas.index') }}">Cancelar</a>
+        </div>
+    </form>
+</div>
+@endsection

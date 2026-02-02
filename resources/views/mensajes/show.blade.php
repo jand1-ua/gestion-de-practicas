@@ -1,49 +1,59 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Detalle del mensaje</title>
-    <style>
-        .nav a { margin-right: 1rem; }
-        .meta { margin-bottom: 1rem; }
-        .meta div { margin-bottom: .2rem; }
-        .contenido { border: 1px solid #ccc; padding: .6rem .7rem; white-space: pre-wrap; }
-    </style>
-</head>
-<body>
-    <h1>Mensaje</h1>
+@extends('layouts.app')
 
-    @php
-        // $usuario viene desde el controlador, pero por si acaso:
-        $usuario = $usuario ?? auth()->user();
+@section('title', 'Detalle del mensaje · Gestión de Prácticas')
 
-        // Si soy destinatario, responder al remitente; si soy remitente, responder al destinatario
-        $respuestaId = ($usuario && $usuario->id === $mensaje->destinatario_id)
-            ? $mensaje->remitente_id
-            : $mensaje->destinatario_id;
-    @endphp
+@section('content')
+@php
+    $usuario = $usuario ?? auth()->user();
 
-    <div class="nav">
-        <a href="{{ route('mensajes.index') }}">Volver a mensajería</a>
-        {{-- Pasamos destinatario_id para que el formulario lo preseleccione --}}
-        <a href="{{ route('mensajes.create', ['destinatario_id' => $respuestaId]) }}">
-            Responder
-        </a>
+    // Si soy destinatario, responder al remitente; si soy remitente, responder al destinatario
+    $respuestaId = ($usuario && $usuario->id === $mensaje->destinatario_id)
+        ? $mensaje->remitente_id
+        : $mensaje->destinatario_id;
+@endphp
+
+<div class="pagehead">
+    <div>
+        <h2>Mensaje</h2>
+        <p>Detalle y contenido del mensaje seleccionado.</p>
     </div>
 
-    <div class="meta">
-        <div><strong>De:</strong> {{ $mensaje->remitente->name }} ({{ $mensaje->remitente->role }})</div>
-        <div><strong>Para:</strong> {{ $mensaje->destinatario->name }} ({{ $mensaje->destinatario->role }})</div>
-        <div><strong>Fecha:</strong> {{ $mensaje->created_at->format('d/m/Y H:i') }}</div>
-        <div><strong>Asunto:</strong> {{ $mensaje->asunto ?: 'Sin asunto' }}</div>
-        @if($mensaje->practica)
-            <div><strong>Práctica asociada:</strong> #{{ $mensaje->practica->id }}</div>
-        @endif
+    <div class="actions">
+        <a class="btn" href="{{ route('mensajes.index') }}">Volver a mensajería</a>
+        <a class="btn btn-primary" href="{{ route('mensajes.create', ['destinatario_id' => $respuestaId]) }}">Responder</a>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Detalles</h3>
+
+        <div class="stack" style="gap:8px; margin-top:12px;">
+            <div><span class="muted">De:</span> <strong>{{ $mensaje->remitente->name }}</strong> <span class="muted">({{ $mensaje->remitente->role }})</span></div>
+            <div><span class="muted">Para:</span> <strong>{{ $mensaje->destinatario->name }}</strong> <span class="muted">({{ $mensaje->destinatario->role }})</span></div>
+            <div><span class="muted">Fecha:</span> <span class="nowrap">{{ $mensaje->created_at->format('d/m/Y H:i') }}</span></div>
+            <div><span class="muted">Asunto:</span> {{ $mensaje->asunto ?: 'Sin asunto' }}</div>
+
+            @if($mensaje->practica)
+                <div><span class="muted">Práctica asociada:</span> #{{ $mensaje->practica->id }}</div>
+            @endif
+
+            <div>
+                <span class="muted">Estado:</span>
+                @if($mensaje->leido_en)
+                    <span class="badge badge-ok">Leído</span>
+                @else
+                    <span class="badge badge-warn">No leído</span>
+                @endif
+            </div>
+        </div>
     </div>
 
-    <div class="contenido">
-        {{-- El campo en la BD se llama "cuerpo" --}}
-        {{ $mensaje->cuerpo }}
+    <div class="card">
+        <h3>Contenido</h3>
+        <div style="margin-top:12px; white-space: pre-wrap; line-height:1.6; color: rgba(255,255,255,.88);">
+            {{ $mensaje->cuerpo }}
+        </div>
     </div>
-</body>
-</html>
+</div>
+@endsection
