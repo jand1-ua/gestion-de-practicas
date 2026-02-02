@@ -1,76 +1,83 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <title>Área del alumno</title>
-    <style>
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin:0; background:#f5f5f5; }
-        main {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 24px 20px 32px;
-            background:#fff;
-            border-radius:8px;
-            box-shadow:0 2px 6px rgba(0,0,0,0.06);
-        }
-        table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
-        th, td { border: 1px solid #ccc; padding: 4px 6px; text-align: left; }
-        th { background: #eee; }
-        a { color:#c62828; text-decoration:none; }
-        a:hover { text-decoration:underline; }
-    </style>
-</head>
-<body>
-<main>
-    <h1>Área del alumno</h1>
+@extends('layouts.app')
 
-    <p>
-        Bienvenido, {{ $user->name }} ({{ $user->email }}).
-    </p>
+@section('title', 'Área del alumno · Gestión de Prácticas')
 
-    <p>
-        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-            @csrf
-            <button type="submit">Cerrar sesión</button>
-        </form>
-        &nbsp;|&nbsp;
-        <a href="{{ url('/') }}">Inicio</a>
-    </p>
+@section('content')
+<div class="pagehead">
+    <div>
+        <h2>Área del alumno</h2>
+        <p>Resumen de tus datos y prácticas asignadas.</p>
+    </div>
 
-    @if ($alumno)
-        <h2>Mis prácticas</h2>
+    <div class="actions">
+        <a class="btn" href="{{ route('mensajes.index') }}">Mensajería</a>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Mi perfil</h3>
+        <p style="margin-top:10px;"><strong>{{ $user->name }}</strong></p>
+        <p class="muted" style="margin:6px 0 0;">{{ $user->email }}</p>
+        <p style="margin:10px 0 0;"><span class="badge badge-ok">alumno</span></p>
+    </div>
+
+    <div class="card">
+        <h3>Acciones rápidas</h3>
+        <p class="muted">Atajos para lo más habitual.</p>
+        <div class="actions" style="margin-top:12px;">
+            <a class="btn btn-primary" href="{{ route('mensajes.create') }}">Nuevo mensaje</a>
+            <a class="btn" href="{{ route('home') }}">Inicio</a>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top:16px;"></div>
+
+@if ($alumno)
+    <div class="card">
+        <h3>Mis prácticas</h3>
+        <p class="muted">Listado de prácticas asociadas a tu perfil.</p>
 
         @if ($alumno->practicas->isEmpty())
-            <p>No tienes prácticas registradas.</p>
+            <div class="alert" style="margin-top:12px;">No tienes prácticas registradas.</div>
         @else
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Empresa</th>
-                    <th>Tutor</th>
-                    <th>Estado</th>
-                    <th>Inicio</th>
-                    <th>Fin</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($alumno->practicas as $practica)
-                    <tr>
-                        <td>{{ $practica->id }}</td>
-                        <td>{{ $practica->empresa?->nombre }}</td>
-                        <td>{{ $practica->tutor?->nombre }}</td>
-                        <td>{{ $practica->estado }}</td>
-                        <td>{{ $practica->fecha_inicio }}</td>
-                        <td>{{ $practica->fecha_fin ?? '-' }}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+            <div class="table-wrap" style="margin-top:12px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Empresa</th>
+                            <th>Tutor</th>
+                            <th>Estado</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($alumno->practicas as $practica)
+                            <tr>
+                                <td>#{{ $practica->id }}</td>
+                                <td>{{ $practica->empresa?->nombre ?? '-' }}</td>
+                                <td>{{ $practica->tutor?->nombre ?? '-' }}</td>
+                                <td>
+                                    @php
+                                        $estado = $practica->estado;
+                                        $label = $estado === 'en_curso' ? 'En curso' : ucfirst($estado);
+                                        $badge = $estado === 'finalizada' ? 'badge-ok' : ($estado === 'pendiente' ? 'badge-warn' : 'badge-info');
+                                    @endphp
+                                    <span class="badge {{ $badge }}">{{ $label }}</span>
+                                </td>
+                                <td>{{ $practica->fecha_inicio }}</td>
+                                <td>{{ $practica->fecha_fin ?? '-' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endif
-    @else
-        <p>No hay alumno asociado a este usuario.</p>
-    @endif
-</main>
-</body>
-</html>
+    </div>
+@else
+    <div class="alert alert-danger">No hay alumno asociado a este usuario.</div>
+@endif
+@endsection

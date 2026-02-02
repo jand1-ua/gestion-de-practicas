@@ -1,140 +1,153 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestión de prácticas</title>
-</head>
-<body>
-<h1>Gestión de prácticas</h1>
+@extends('layouts.app')
 
-<p>
-    <a href="{{ url('/') }}">Inicio</a> |
-    <a href="{{ route('admin.alumnos.index') }}">Gestión de alumnos</a> |
-    <a href="{{ route('admin.empresas.index') }}">Gestión de empresas</a> |
-    <a href="{{ route('admin.tutores.index') }}">Gestión de tutores</a> |
-    <a href="{{ route('admin.practicas.create') }}">Nueva práctica</a>
-</p>
+@section('title', 'Prácticas · Panel coordinador')
 
-@if (session('success'))
-    <p style="color: darkgreen;">{{ session('success') }}</p>
-@endif
+@section('content')
+@include('partials.admin-subnav')
 
-@if (session('error'))
-    <p style="color: darkred;">{{ session('error') }}</p>
-@endif
+@php
+    $estadoActual = request('estado');
+    $empresaActual = request('empresa_id');
+    $alumnoActual = request('alumno_id');
+    $tutorActual = request('tutor_id');
+@endphp
 
-{{-- Filtros de búsqueda --}}
-<form method="GET" action="{{ route('admin.practicas.index') }}" style="margin-bottom: 1rem; padding: .5rem; border: 1px solid #ccc;">
-    <strong>Filtros</strong><br><br>
-
-    {{-- Estado --}}
-    <label for="estado">Estado:</label>
-    <select name="estado" id="estado">
-        <option value="">-- Todos --</option>
-        <option value="en_curso"  {{ request('estado') === 'en_curso' ? 'selected' : '' }}>En curso</option>
-        <option value="pendiente" {{ request('estado') === 'pendiente' ? 'selected' : '' }}>Pendiente</option>
-        <option value="finalizada" {{ request('estado') === 'finalizada' ? 'selected' : '' }}>Finalizada</option>
-    </select>
-
-    &nbsp;&nbsp;
-
-    {{-- Empresa --}}
-    <label for="empresa_id">Empresa:</label>
-    <select name="empresa_id" id="empresa_id">
-        <option value="">-- Todas --</option>
-        @foreach ($empresas as $empresa)
-            <option value="{{ $empresa->id }}"
-                {{ (string)request('empresa_id') === (string)$empresa->id ? 'selected' : '' }}>
-                {{ $empresa->nombre }}
-            </option>
-        @endforeach
-    </select>
-
-    &nbsp;&nbsp;
-
-    {{-- Alumno --}}
-    <label for="alumno_id">Alumno:</label>
-    <select name="alumno_id" id="alumno_id">
-        <option value="">-- Todos --</option>
-        @foreach ($alumnos as $alumno)
-            <option value="{{ $alumno->id }}"
-                {{ (string)request('alumno_id') === (string)$alumno->id ? 'selected' : '' }}>
-                {{ $alumno->nombre }}
-            </option>
-        @endforeach
-    </select>
-
-    &nbsp;&nbsp;
-
-    {{-- Tutor --}}
-    <label for="tutor_id">Tutor:</label>
-    <select name="tutor_id" id="tutor_id">
-        <option value="">-- Todos --</option>
-        @foreach ($tutores as $tutor)
-            <option value="{{ $tutor->id }}"
-                {{ (string)request('tutor_id') === (string)$tutor->id ? 'selected' : '' }}>
-                {{ $tutor->nombre }} ({{ $tutor->empresa->nombre ?? '-' }})
-            </option>
-        @endforeach
-    </select>
-
-    &nbsp;&nbsp;
-
-    <button type="submit">Filtrar</button>
-    <a href="{{ route('admin.practicas.index') }}">Limpiar filtros</a>
-</form>
-
-<table border="1" cellpadding="4" cellspacing="0">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Alumno</th>
-        <th>Empresa</th>
-        <th>Tutor</th>
-        <th>Estado</th>
-        <th>Inicio</th>
-        <th>Fin</th>
-        <th>Observaciones</th>
-        <th>Acciones</th>
-    </tr>
-    </thead>
-    <tbody>
-    @forelse ($practicas as $practica)
-        <tr>
-            <td>{{ $practica->id }}</td>
-            <td>{{ $practica->alumno->nombre ?? '-' }}</td>
-            <td>{{ $practica->empresa->nombre ?? '-' }}</td>
-            <td>{{ $practica->tutor->nombre ?? '-' }}</td>
-            <td>{{ $practica->estado }}</td>
-            <td>{{ $practica->fecha_inicio }}</td>
-            <td>{{ $practica->fecha_fin }}</td>
-            <td>{{ $practica->observaciones }}</td>
-            <td>
-                <a href="{{ route('admin.practicas.show', $practica) }}">Ver</a> |
-                <a href="{{ route('admin.practicas.edit', $practica) }}">Editar</a> |
-                <form action="{{ route('admin.practicas.destroy', $practica) }}"
-                      method="POST" style="display:inline"
-                      onsubmit="return confirm('¿Eliminar práctica?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">Eliminar</button>
-                </form>
-            </td>
-        </tr>
-    @empty
-        <tr>
-            <td colspan="9">No hay prácticas registradas.</td>
-        </tr>
-    @endforelse
-    </tbody>
-</table>
-
-{{-- Paginación --}}
-@if ($practicas instanceof \Illuminate\Pagination\LengthAwarePaginator)
-    <div style="margin-top: 1rem;">
-        {{ $practicas->links() }}
+<div class="pagehead">
+    <div>
+        <h2>Prácticas</h2>
+        <p>Listado y filtros de asignaciones de prácticas.</p>
     </div>
-@endif
 
-</body>
-</html>
+    <div class="actions">
+        <a class="btn btn-primary" href="{{ route('admin.practicas.create') }}">Nueva práctica</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Filtros</h3>
+    <p class="muted">Los filtros consultan la base de datos. Puedes además usar la búsqueda local para filtrar la tabla actual.</p>
+
+    <form method="GET" action="{{ route('admin.practicas.index') }}" class="form" style="margin-top:12px;">
+        <div class="field-row">
+            <div class="field">
+                <label class="label" for="estado">Estado</label>
+                <select class="select" name="estado" id="estado">
+                    @foreach($estados as $value => $label)
+                        <option value="{{ $value }}" @selected((string) $estadoActual === (string) $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="field">
+                <label class="label" for="empresa_id">Empresa</label>
+                <select class="select" name="empresa_id" id="empresa_id">
+                    <option value="">Todas</option>
+                    @foreach ($empresas as $empresa)
+                        <option value="{{ $empresa->id }}" @selected((string) $empresaActual === (string) $empresa->id)>
+                            {{ $empresa->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label class="label" for="alumno_id">Alumno</label>
+                <select class="select" name="alumno_id" id="alumno_id">
+                    <option value="">Todos</option>
+                    @foreach ($alumnos as $alumno)
+                        <option value="{{ $alumno->id }}" @selected((string) $alumnoActual === (string) $alumno->id)>
+                            {{ $alumno->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="field">
+                <label class="label" for="tutor_id">Tutor</label>
+                <select class="select" name="tutor_id" id="tutor_id">
+                    <option value="">Todos</option>
+                    @foreach ($tutores as $tutor)
+                        <option value="{{ $tutor->id }}" @selected((string) $tutorActual === (string) $tutor->id)>
+                            {{ $tutor->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" type="submit">Aplicar filtros</button>
+            <a class="btn" href="{{ route('admin.practicas.index') }}">Limpiar</a>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="actions" style="justify-content:space-between; width:100%; align-items:flex-end;">
+        <div class="field" style="max-width:320px;">
+            <label class="label" for="practicas-search">Buscar en esta página</label>
+            <input class="control" id="practicas-search" type="search" data-table-filter="practicas-table"
+                   placeholder="Alumno, empresa, tutor, observaciones...">
+            <div class="help">Filtro local (no afecta a los enlaces de paginación).</div>
+        </div>
+        <div class="muted">{{ $practicas->total() }} registro(s)</div>
+    </div>
+
+    <div class="table-wrap" style="margin-top:12px;">
+        <table class="table" id="practicas-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Alumno</th>
+                <th>Empresa</th>
+                <th>Tutor</th>
+                <th>Estado</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Observaciones</th>
+                <th style="width:240px;">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            @forelse ($practicas as $practica)
+                @php
+                    $estado = $practica->estado;
+                    $estadoLabel = $estado === 'en_curso' ? 'En curso' : ucfirst($estado);
+                    $badge = $estado === 'finalizada' ? 'badge-ok' : ($estado === 'pendiente' ? 'badge-warn' : 'badge-info');
+                @endphp
+                <tr>
+                    <td class="muted">#{{ $practica->id }}</td>
+                    <td>{{ $practica->alumno->nombre ?? '-' }}</td>
+                    <td>{{ $practica->empresa->nombre ?? '-' }}</td>
+                    <td>{{ $practica->tutor->nombre ?? '-' }}</td>
+                    <td><span class="badge {{ $badge }}">{{ $estadoLabel }}</span></td>
+                    <td class="muted">{{ $practica->fecha_inicio }}</td>
+                    <td class="muted">{{ $practica->fecha_fin ?? '—' }}</td>
+                    <td style="max-width: 360px;">{{ $practica->observaciones }}</td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn btn-sm" href="{{ route('admin.practicas.show', $practica) }}">Ver</a>
+                            <a class="btn btn-sm" href="{{ route('admin.practicas.edit', $practica) }}">Editar</a>
+                            <form action="{{ route('admin.practicas.destroy', $practica) }}" method="POST"
+                                  onsubmit="return confirm('¿Eliminar práctica?');">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger" type="submit">Borrar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="9" class="muted">No hay prácticas registradas con los filtros seleccionados.</td>
+                </tr>
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    {{ $practicas->links() }}
+</div>
+@endsection

@@ -1,22 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar empresa</title>
-</head>
-<body>
-<h1>Editar empresa</h1>
+@extends('layouts.app')
 
-<p>
-    <a href="{{ route('admin.empresas.index') }}">Volver al listado</a>
-</p>
+@section('title', 'Editar empresa · Panel coordinador')
 
-<form action="{{ route('admin.empresas.update', $empresa) }}" method="POST">
-    @method('PUT')
-    @include('admin.empresas._form')
-    <div style="margin-top: 12px;">
-        <button type="submit">Actualizar</button>
+@section('content')
+@include('partials.admin-subnav')
+
+<div class="pagehead">
+    <div>
+        <h2>Editar empresa</h2>
+        <p>Actualiza la información de la empresa seleccionada.</p>
     </div>
-</form>
-</body>
-</html>
+
+    <div class="actions">
+        <a class="btn" href="{{ route('admin.empresas.show', $empresa) }}">Ver detalle</a>
+        <a class="btn" href="{{ route('admin.empresas.index') }}">Volver</a>
+    </div>
+</div>
+
+@include('partials.validation-errors')
+
+<div class="card">
+    <form class="form" method="POST" action="{{ route('admin.empresas.update', $empresa) }}">
+        @csrf
+        @method('PUT')
+
+        @include('admin.empresas._form', ['empresa' => $empresa])
+
+        <div class="actions">
+            <button class="btn btn-primary" type="submit">Guardar cambios</button>
+            <a class="btn" href="{{ route('admin.empresas.index') }}">Cancelar</a>
+        </div>
+    </form>
+</div>
+@endsection

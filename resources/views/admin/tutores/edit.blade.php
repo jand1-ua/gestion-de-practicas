@@ -1,24 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar tutor</title>
-</head>
-<body>
-<h1>Editar tutor</h1>
+@extends('layouts.app')
 
-<p>
-    <a href="{{ route('admin.tutores.index') }}">Volver al listado</a>
-</p>
+@section('title', 'Editar tutor · Panel coordinador')
 
-<form action="{{ route('admin.tutores.update', $tutor) }}" method="POST">
-    @method('PUT')
-    @include('admin.tutores._form')
+@section('content')
+@include('partials.admin-subnav')
 
-    <div style="margin-top: 12px;">
-        <button type="submit">Actualizar</button>
+<div class="pagehead">
+    <div>
+        <h2>Editar tutor</h2>
+        <p>Actualiza la información del tutor seleccionado.</p>
     </div>
-</form>
 
-</body>
-</html>
+    <div class="actions">
+        <a class="btn" href="{{ route('admin.tutores.show', $tutor) }}">Ver detalle</a>
+        <a class="btn" href="{{ route('admin.tutores.index') }}">Volver</a>
+    </div>
+</div>
+
+@include('partials.validation-errors')
+
+<div class="card">
+    <form class="form" method="POST" action="{{ route('admin.tutores.update', $tutor) }}">
+        @csrf
+        @method('PUT')
+
+        @include('admin.tutores._form', ['empresas' => $empresas, 'tutor' => $tutor])
+
+        <div class="actions">
+            <button class="btn btn-primary" type="submit">Guardar cambios</button>
+            <a class="btn" href="{{ route('admin.tutores.index') }}">Cancelar</a>
+        </div>
+    </form>
+</div>
+@endsection

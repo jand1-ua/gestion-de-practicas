@@ -1,42 +1,34 @@
+@php
+    $tutor = $tutor ?? new \App\Models\Tutor();
+@endphp
+
 @csrf
 
-<div>
-    <label>Empresa</label><br>
-    <select name="empresa_id" style="width:100%;">
+<div class="field">
+    <label class="label" for="empresa_id">Empresa</label>
+    <select class="select" id="empresa_id" name="empresa_id" required>
         <option value="">-- Selecciona una empresa --</option>
         @foreach($empresas as $empresa)
-            <option value="{{ $empresa->id }}"
-                {{ (int) old('empresa_id', $tutor->empresa_id ?? 0) === $empresa->id ? 'selected' : '' }}>
+            <option value="{{ $empresa->id }}" @selected((int) old('empresa_id', $tutor->empresa_id ?? 0) === (int) $empresa->id)>
                 {{ $empresa->nombre }}
             </option>
         @endforeach
     </select>
 </div>
 
-<div style="margin-top:8px;">
-    <label>Nombre</label><br>
-    <input type="text" name="nombre" style="width:100%;"
-           value="{{ old('nombre', $tutor->nombre ?? '') }}">
+<div class="field">
+    <label class="label" for="nombre">Nombre</label>
+    <input class="control" type="text" id="nombre" name="nombre" value="{{ old('nombre', $tutor->nombre ?? '') }}" required>
 </div>
 
-<div style="margin-top:8px;">
-    <label>Email</label><br>
-    <input type="email" name="email" style="width:100%;"
-           value="{{ old('email', $tutor->email ?? '') }}">
-</div>
-
-<div style="margin-top:8px;">
-    <label>Teléfono</label><br>
-    <input type="text" name="telefono" style="width:100%;"
-           value="{{ old('telefono', $tutor->telefono ?? '') }}">
-</div>
-
-@if ($errors->any())
-    <div style="margin-top:10px;color:darkred;">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>• {{ $error }}</li>
-            @endforeach
-        </ul>
+<div class="field-row">
+    <div class="field">
+        <label class="label" for="email">Email</label>
+        <input class="control" type="email" id="email" name="email" value="{{ old('email', $tutor->email ?? '') }}" required>
     </div>
-@endif
+
+    <div class="field">
+        <label class="label" for="telefono">Teléfono</label>
+        <input class="control" type="text" id="telefono" name="telefono" value="{{ old('telefono', $tutor->telefono ?? '') }}" required>
+    </div>
+</div>

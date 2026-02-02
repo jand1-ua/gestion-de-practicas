@@ -1,23 +1,56 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Detalle de alumno</title>
-</head>
-<body>
-<h1>Detalle de alumno</h1>
+@extends('layouts.app')
 
-<p>
-    <a href="{{ route('admin.alumnos.index') }}">Volver al listado</a>
-</p>
+@section('title', 'Detalle de alumno · Panel coordinador')
 
-<ul>
-    <li><strong>ID:</strong> {{ $alumno->id }}</li>
-    <li><strong>Nombre:</strong> {{ $alumno->nombre }}</li>
-    <li><strong>Email:</strong> {{ $alumno->email }}</li>
-    <li><strong>Grado:</strong> {{ $alumno->grado }}</li>
-    <li><strong>Curso:</strong> {{ $alumno->curso }}</li>
-</ul>
+@section('content')
+@include('partials.admin-subnav')
 
-</body>
-</html>
+<div class="pagehead">
+    <div>
+        <h2>Alumno #{{ $alumno->id }}</h2>
+        <p>Detalle de la ficha del alumno seleccionado.</p>
+    </div>
+
+    <div class="actions">
+        <a class="btn btn-primary" href="{{ route('admin.alumnos.edit', $alumno) }}">Editar</a>
+        <a class="btn" href="{{ route('admin.alumnos.index') }}">Volver</a>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Datos principales</h3>
+
+        <div class="kv">
+            <div class="k">Nombre</div>
+            <div class="v"><strong>{{ $alumno->nombre }}</strong></div>
+
+            <div class="k">Email</div>
+            <div class="v">{{ $alumno->email }}</div>
+
+            <div class="k">Grado</div>
+            <div class="v">{{ $alumno->grado }}</div>
+
+            <div class="k">Curso</div>
+            <div class="v">{{ $alumno->curso }}</div>
+
+            <div class="k">Prácticas asociadas</div>
+            <div class="v">{{ $alumno->practicas()->count() }}</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Acciones</h3>
+        <p class="muted">Accesos rápidos relacionados.</p>
+
+        <div class="actions" style="margin-top:12px;">
+            <a class="btn" href="{{ route('admin.practicas.index', ['alumno_id' => $alumno->id]) }}">Ver prácticas del alumno</a>
+            <a class="btn" href="{{ route('admin.practicas.create') }}">Crear práctica</a>
+        </div>
+
+        <hr class="hr">
+
+        <div class="help">Consejo: usa el filtro de prácticas para localizar rápidamente las asignaciones.</div>
+    </div>
+</div>
+@endsection

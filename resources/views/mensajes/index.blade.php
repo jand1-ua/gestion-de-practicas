@@ -1,126 +1,114 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Mensajería interna</title>
-    <style>
-        table { border-collapse: collapse; width: 100%; margin-bottom: 1.5rem; }
-        th, td { border: 1px solid #ccc; padding: .4rem .6rem; }
-        th { background: #f2f2f2; }
-        .nav a { margin-right: 1rem; }
-        .flash { padding: .5rem .75rem; margin-bottom: 1rem; border-radius: 4px; }
-        .flash-success { background: #e6f4ea; border: 1px solid #2e7d32; color: #2e7d32; }
-        .flash-error { background: #ffebee; border: 1px solid #c62828; color: #c62828; }
-    </style>
-</head>
-<body>
-    <h1>Mensajería interna</h1>
+@extends('layouts.app')
 
-    <div class="nav">
-        <a href="{{ url('/') }}">Inicio</a>
+@section('title', 'Mensajería · Gestión de Prácticas')
 
-        @if ($usuario->isAdmin())
-            <a href="{{ route('admin.dashboard') }}">Área de administración</a>
-        @elseif ($usuario->isAlumno())
-            <a href="{{ route('area.alumno') }}">Área del alumno</a>
-        @elseif ($usuario->isTutor())
-            <a href="{{ route('area.tutor') }}">Área del tutor</a>
-        @endif
-
-        <a href="{{ route('mensajes.create') }}">Nuevo mensaje</a>
+@section('content')
+<div class="pagehead">
+    <div>
+        <h2>Mensajería interna</h2>
+        <p>Consulta tus mensajes recibidos y enviados. Los no leídos aparecen marcados.</p>
     </div>
 
-    @if (session('success'))
-        <div class="flash flash-success">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="flash flash-error">{{ session('error') }}</div>
-    @endif
+    <div class="actions">
+        <a class="btn btn-primary" href="{{ route('mensajes.create') }}">Nuevo mensaje</a>
+    </div>
+</div>
 
-    <h2>Bandeja de entrada</h2>
+<div class="stack">
+    <section class="card">
+        <h3>Bandeja de entrada</h3>
+        <p class="muted">{{ $recibidos->total() }} mensaje(s).</p>
 
-    <table>
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>De</th>
-            <th>Asunto</th>
-            <th>Práctica</th>
-            <th>Estado</th>
-        </tr>
-        </thead>
-        <tbody>
-        @forelse($recibidos as $mensaje)
-            <tr>
-                <td>{{ $mensaje->created_at->format('d/m/Y H:i') }}</td>
-                <td>{{ $mensaje->remitente->name }} ({{ $mensaje->remitente->role }})</td>
-                <td>
-                    <a href="{{ route('mensajes.show', $mensaje) }}">
-                        {{ $mensaje->asunto ?: 'Sin asunto' }}
-                    </a>
-                </td>
-                <td>
-                    @if($mensaje->practica)
-                        #{{ $mensaje->practica->id }}
-                    @else
-                        -
-                    @endif
-                </td>
-                <td>
-                    @if($mensaje->leido_en)
-                        Leído
-                    @else
-                        <strong>No leído</strong>
-                    @endif
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="5">No tienes mensajes recibidos.</td>
-            </tr>
-        @endforelse
-        </tbody>
-    </table>
+        <div class="table-wrap" style="margin-top:12px;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>De</th>
+                        <th>Asunto</th>
+                        <th>Práctica</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($recibidos as $mensaje)
+                        <tr>
+                            <td class="muted">{{ $mensaje->created_at->format('d/m/Y H:i') }}</td>
+                            <td>{{ $mensaje->remitente->name }} <span class="muted">({{ $mensaje->remitente->role }})</span></td>
+                            <td>
+                                <a href="{{ route('mensajes.show', $mensaje) }}">
+                                    {{ $mensaje->asunto ?: 'Sin asunto' }}
+                                </a>
+                            </td>
+                            <td class="muted">
+                                @if($mensaje->practica)
+                                    #{{ $mensaje->practica->id }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                @if($mensaje->leido_en)
+                                    <span class="badge badge-ok">Leído</span>
+                                @else
+                                    <span class="badge badge-warn">No leído</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="muted">No tienes mensajes recibidos.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-    {{ $recibidos->links() }}
+        {{ $recibidos->links() }}
+    </section>
 
-    <h2>Mensajes enviados</h2>
+    <section class="card">
+        <h3>Enviados</h3>
+        <p class="muted">{{ $enviados->total() }} mensaje(s).</p>
 
-    <table>
-        <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Para</th>
-            <th>Asunto</th>
-            <th>Práctica</th>
-        </tr>
-        </thead>
-        <tbody>
-        @forelse($enviados as $mensaje)
-            <tr>
-                <td>{{ $mensaje->created_at->format('d/m/Y H:i') }}</td>
-                <td>{{ $mensaje->destinatario->name }} ({{ $mensaje->destinatario->role }})</td>
-                <td>
-                    <a href="{{ route('mensajes.show', $mensaje) }}">
-                        {{ $mensaje->asunto ?: 'Sin asunto' }}
-                    </a>
-                </td>
-                <td>
-                    @if($mensaje->practica)
-                        #{{ $mensaje->practica->id }}
-                    @else
-                        -
-                    @endif
-                </td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="4">No has enviado ningún mensaje.</td>
-            </tr>
-        @endforelse
-        </tbody>
-    </table>
+        <div class="table-wrap" style="margin-top:12px;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Para</th>
+                        <th>Asunto</th>
+                        <th>Práctica</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($enviados as $mensaje)
+                        <tr>
+                            <td class="muted">{{ $mensaje->created_at->format('d/m/Y H:i') }}</td>
+                            <td>{{ $mensaje->destinatario->name }} <span class="muted">({{ $mensaje->destinatario->role }})</span></td>
+                            <td>
+                                <a href="{{ route('mensajes.show', $mensaje) }}">
+                                    {{ $mensaje->asunto ?: 'Sin asunto' }}
+                                </a>
+                            </td>
+                            <td class="muted">
+                                @if($mensaje->practica)
+                                    #{{ $mensaje->practica->id }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="muted">No has enviado ningún mensaje.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-    {{ $enviados->links() }}
-</body>
-</html>
+        {{ $enviados->links() }}
+    </section>
+</div>
+@endsection

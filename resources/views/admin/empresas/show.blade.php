@@ -1,25 +1,61 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Detalle de empresa</title>
-</head>
-<body>
-<h1>Detalle de empresa</h1>
+@extends('layouts.app')
 
-<p>
-    <a href="{{ route('admin.empresas.index') }}">Volver al listado</a>
-</p>
+@section('title', 'Detalle de empresa · Panel coordinador')
 
-<ul>
-    <li><strong>ID:</strong> {{ $empresa->id }}</li>
-    <li><strong>Nombre:</strong> {{ $empresa->nombre }}</li>
-    <li><strong>CIF:</strong> {{ $empresa->cif }}</li>
-    <li><strong>Sector:</strong> {{ $empresa->sector }}</li>
-    <li><strong>Ciudad:</strong> {{ $empresa->ciudad }}</li>
-    <li><strong>Email de contacto:</strong> {{ $empresa->email_contacto }}</li>
-    <li><strong>Teléfono de contacto:</strong> {{ $empresa->telefono_contacto }}</li>
-</ul>
+@section('content')
+@include('partials.admin-subnav')
 
-</body>
-</html>
+<div class="pagehead">
+    <div>
+        <h2>Empresa #{{ $empresa->id }}</h2>
+        <p>Detalle de la empresa seleccionada.</p>
+    </div>
+
+    <div class="actions">
+        <a class="btn btn-primary" href="{{ route('admin.empresas.edit', $empresa) }}">Editar</a>
+        <a class="btn" href="{{ route('admin.empresas.index') }}">Volver</a>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Datos principales</h3>
+
+        <div class="kv">
+            <div class="k">Nombre</div>
+            <div class="v"><strong>{{ $empresa->nombre }}</strong></div>
+
+            <div class="k">CIF</div>
+            <div class="v">{{ $empresa->cif }}</div>
+
+            <div class="k">Sector</div>
+            <div class="v">{{ $empresa->sector }}</div>
+
+            <div class="k">Ciudad</div>
+            <div class="v">{{ $empresa->ciudad }}</div>
+
+            <div class="k">Prácticas asociadas</div>
+            <div class="v">{{ $empresa->practicas()->count() }}</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Contacto</h3>
+        <p class="muted">Datos de contacto para coordinación.</p>
+
+        <div class="kv">
+            <div class="k">Email</div>
+            <div class="v">{{ $empresa->email_contacto }}</div>
+
+            <div class="k">Teléfono</div>
+            <div class="v">{{ $empresa->telefono_contacto }}</div>
+        </div>
+
+        <hr class="hr">
+
+        <div class="actions">
+            <a class="btn" href="{{ route('admin.practicas.index', ['empresa_id' => $empresa->id]) }}">Ver prácticas de la empresa</a>
+        </div>
+    </div>
+</div>
+@endsection

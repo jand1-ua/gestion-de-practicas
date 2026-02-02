@@ -1,35 +1,28 @@
+@php
+    $alumno = $alumno ?? new \App\Models\Alumno();
+@endphp
+
 @csrf
 
-<div>
-    <label>Nombre</label><br>
-    <input type="text" name="nombre" style="width: 100%;"
-           value="{{ old('nombre', $alumno->nombre ?? '') }}">
+<div class="field">
+    <label class="label" for="nombre">Nombre</label>
+    <input class="control" type="text" id="nombre" name="nombre" value="{{ old('nombre', $alumno->nombre ?? '') }}" required>
 </div>
 
-<div style="margin-top: 8px;">
-    <label>Email</label><br>
-    <input type="email" name="email" style="width: 100%;"
-           value="{{ old('email', $alumno->email ?? '') }}">
-</div>
-
-<div style="margin-top: 8px;">
-    <label>Grado</label><br>
-    <input type="text" name="grado" style="width: 100%;"
-           value="{{ old('grado', $alumno->grado ?? '') }}">
-</div>
-
-<div style="margin-top: 8px;">
-    <label>Curso</label><br>
-    <input type="text" name="curso" style="width: 100%;"
-           value="{{ old('curso', $alumno->curso ?? '') }}">
-</div>
-
-@if ($errors->any())
-    <div style="margin-top: 10px; color: darkred;">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>• {{ $error }}</li>
-            @endforeach
-        </ul>
+<div class="field-row">
+    <div class="field">
+        <label class="label" for="email">Email</label>
+        <input class="control" type="email" id="email" name="email" value="{{ old('email', $alumno->email ?? '') }}" required>
     </div>
-@endif
+
+    <div class="field">
+        <label class="label" for="grado">Grado</label>
+        <input class="control" type="text" id="grado" name="grado" value="{{ old('grado', $alumno->grado ?? '') }}" required>
+    </div>
+</div>
+
+<div class="field">
+    <label class="label" for="curso">Curso</label>
+    <input class="control" type="text" id="curso" name="curso" value="{{ old('curso', $alumno->curso ?? '') }}" required>
+    <div class="help">Ejemplo: 3º, 4º, Máster…</div>
+</div>
