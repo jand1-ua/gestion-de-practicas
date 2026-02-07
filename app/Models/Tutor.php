@@ -20,15 +20,11 @@ class Tutor extends Model
         'telefono',
     ];
 
-    // El tutor pertenece a una empresa.
-     
     public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    // El tutor supervisa muchas prácticas.
-     
     public function practicas(): HasMany
     {
         return $this->hasMany(Practica::class);

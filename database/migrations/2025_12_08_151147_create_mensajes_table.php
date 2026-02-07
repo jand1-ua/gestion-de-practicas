@@ -14,12 +14,10 @@ return new class extends Migration
         Schema::create('mensajes', function (Blueprint $table) {
             $table->id();
 
-            // Usuario que envía el mensaje
             $table->foreignId('remitente_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            // Usuario que recibe el mensaje
             $table->foreignId('destinatario_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
@@ -27,10 +25,9 @@ return new class extends Migration
             $table->string('asunto');
             $table->text('cuerpo');
 
-            // Campo opcional para marcar como leído
             $table->timestamp('leido_en')->nullable();
 
-            $table->timestamps(); // created_at, updated_at
+            $table->timestamps(); 
         });
     }
 

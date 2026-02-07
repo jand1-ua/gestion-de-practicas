@@ -19,7 +19,6 @@ class Alumno extends Model
         'curso',
     ];
     
-    // Un alumno puede tener muchas prácticas.
      
     public function practicas(): HasMany
     {

@@ -10,7 +10,6 @@ class MensajeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Ya controlamos autenticación con middleware 'auth'
         return $this->user() !== null;
     }
 
@@ -52,7 +51,6 @@ class MensajeRequest extends FormRequest
                 return;
             }
 
-            // ADMIN → puede escribir a alumnos y tutores
             if ($user->isAdmin()) {
                 if (!in_array($dest->role, ['alumno', 'tutor'])) {
                     $validator->errors()->add(
@@ -63,12 +61,10 @@ class MensajeRequest extends FormRequest
                 return;
             }
 
-            // ALUMNO o TUTOR → puede escribir a admin
             if (in_array($user->role, ['alumno', 'tutor']) && $dest->isAdmin()) {
                 return;
             }
 
-            // ALUMNO → TUTOR: debe existir práctica que vincule a ambos
             if ($user->isAlumno() && $dest->isTutor()) {
                 $exists = Practica::where('alumno_id', $user->alumno_id)
                     ->where('tutor_id', $dest->tutor_id)
@@ -83,7 +79,6 @@ class MensajeRequest extends FormRequest
                 return;
             }
 
-            // TUTOR → ALUMNO: debe existir práctica que vincule a ambos
             if ($user->isTutor() && $dest->isAlumno()) {
                 $exists = Practica::where('alumno_id', $dest->alumno_id)
                     ->where('tutor_id', $user->tutor_id)
@@ -98,7 +93,6 @@ class MensajeRequest extends FormRequest
                 return;
             }
 
-            // Cualquier otra combinación no está permitida
             $validator->errors()->add(
                 'destinatario_id',
                 'No está permitido enviar mensajes a este tipo de usuario.'

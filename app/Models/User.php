@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,25 +13,22 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     
-    // Atributos asignables en masa. 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',       // 'coordinador', 'alumno', 'tutor'
+        'role',       
         'alumno_id',  
         'tutor_id',   
     ];
 
     
-    // Atributos ocultos para serialización.
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
     
-    // Casts.
     protected function casts(): array
     {
         return [
@@ -41,10 +37,7 @@ class User extends Authenticatable
         ];
     }
 
-    // -------------------------------------------------
-    // Métodos de ayuda para roles
-    // -------------------------------------------------
-
+    
     public function isAdmin(): bool
     {
         return $this->role === 'coordinador';
@@ -60,10 +53,6 @@ class User extends Authenticatable
         return $this->role === 'tutor';
     }
 
-    // -------------------------------------------------
-    // Relaciones con Alumno / Tutor
-    // -------------------------------------------------
-
     public function alumno(): BelongsTo
     {
         return $this->belongsTo(Alumno::class);
@@ -74,9 +63,6 @@ class User extends Authenticatable
         return $this->belongsTo(Tutor::class);
     }
 
-    // -------------------------------------------------
-    // Relaciones de mensajería
-    // -------------------------------------------------
 
     public function mensajesEnviados(): HasMany
     {

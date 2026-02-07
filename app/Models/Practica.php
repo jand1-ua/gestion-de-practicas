@@ -23,23 +23,17 @@ class Practica extends Model
     ];
 
     
-    // La práctica pertenece a un alumno.
-    
     public function alumno(): BelongsTo
     {
         return $this->belongsTo(Alumno::class);
     }
 
     
-    // La práctica pertenece a una empresa.
-     
     public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class);
     }
 
-    // La práctica pertenece a un tutor.
-     
     public function tutor(): BelongsTo
     {
         return $this->belongsTo(Tutor::class);
