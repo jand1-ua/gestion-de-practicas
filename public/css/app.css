@@ -312,9 +312,56 @@ footer.app-footer{
 .nowrap{ white-space:nowrap; }
 .narrow{ max-width: 520px; margin: 0 auto; }
 
-/* Small helpers */
 hr.hr{
   border:0;
   border-top:1px solid rgba(255,255,255,.10);
   margin:16px 0;
 }
+
+
+.code-panel{
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border-radius: 14px;
+  background: #0b1220;                 
+  border: 1px solid #22304a;
+}
+
+.code-panel h3{
+  margin: 0 0 .25rem 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;                      
+}
+
+.code-panel p{
+  margin: 0 0 .9rem 0;
+  font-size: .92rem;
+  color: #cbd5e1;                      
+}
+
+.code-block{
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #22304a;
+  background: #050a13;                 
+}
+
+.code-block pre{
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  line-height: 1.6;
+  font-size: .95rem;
+  color: #e5e7eb;                      
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  white-space: pre;
+}
+
+
+.code-block pre::-webkit-scrollbar{ height: 10px; }
+.code-block pre::-webkit-scrollbar-thumb{ background: #334155; border-radius: 999px; }
+
+.code-block .cmt{ color: #93c5fd; }    
+.code-block .kw { color: #fca5a5; }    
+.code-block .str{ color: #86efac; }    

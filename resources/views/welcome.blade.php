@@ -18,8 +18,6 @@
     </div>
 
     <div class="actions">
-        <a class="btn btn-primary" href="{{ route('sesiones') }}">Ir a sesiones / ejemplos</a>
-
         @if ($user)
             @if ($user->role === 'coordinador')
                 <a class="btn" href="{{ route('admin.practicas.index') }}">Gestionar prácticas</a>
@@ -96,8 +94,6 @@
                 @elseif ($user->role === 'tutor')
                     <a class="btn" href="{{ route('area.tutor') }}">Ir a mi área</a>
                 @endif
-
-                <a class="btn" href="{{ route('sesiones') }}">Ver índice de sesiones</a>
             </div>
         @else
             <p class="muted" style="margin-top:10px;">
@@ -108,9 +104,20 @@
 
             <div class="stack" style="gap:10px;">
                 <a class="btn btn-primary" href="{{ route('login') }}">Iniciar sesión</a>
-                <a class="btn" href="{{ route('sesiones') }}">Ver sesiones / ejemplos</a>
             </div>
         @endif
     </aside>
 </div>
+
+<section class="card" style="margin-top:18px;">
+    <h3>Sesiones y ejemplos de funcionamiento</h3>
+    <p class="muted" style="margin-top:8px;">
+        Esta sección reúne ejemplos guiados para ver cómo funciona la aplicación (rutas, vistas y operaciones típicas).
+        Haz clic para abrir el índice de sesiones y navegar por los ejemplos.
+    </p>
+
+    <div class="actions" style="margin-top:12px;">
+        <a class="btn btn-primary" href="{{ route('sesiones') }}">Ver sesiones / ejemplos</a>
+    </div>
+</section>
 @endsection

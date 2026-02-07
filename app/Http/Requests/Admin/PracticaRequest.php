@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\Tutor;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,18 +13,45 @@ class PracticaRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $tutorId = $this->input('tutor_id');
+
+        if ($tutorId) {
+            $tutor = Tutor::find($tutorId);
+
+            if ($tutor && $tutor->empresa_id) {
+                $this->merge(['empresa_id' => $tutor->empresa_id]);
+            }
+        }
+    }
+
     public function rules(): array
     {
-        // Estados que se usan en los seeders: en_curso, pendiente y finalizada.
         $estados = ['en_curso', 'pendiente', 'finalizada'];
-
-        $practica = $this->route('practica');
-        $practicaId = $practica ? $practica->id : null;
 
         return [
             'alumno_id'     => ['required', 'exists:alumnos,id'],
-            'empresa_id'    => ['required', 'exists:empresas,id'],
             'tutor_id'      => ['required', 'exists:tutores,id'],
+            'empresa_id'    => [
+                'required',
+                'exists:empresas,id',
+                function ($attribute, $value, $fail) {
+                    $tutorId = $this->input('tutor_id');
+                    if (!$tutorId) {
+                        return;
+                    }
+
+                    $tutor = Tutor::find($tutorId);
+                    if (!$tutor) {
+                        return;
+                    }
+
+                    if ((int) $tutor->empresa_id !== (int) $value) {
+                        $fail('La empresa debe coincidir con la empresa del tutor seleccionado.');
+                    }
+                },
+            ],
             'fecha_inicio'  => ['required', 'date'],
             'fecha_fin'     => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
             'estado'        => ['required', 'string', Rule::in($estados)],
