@@ -17,18 +17,29 @@ class TutorRequest extends FormRequest
         $tutor = $this->route('tutor');
         $tutorId = $tutor ? $tutor->id : null;
 
+        $empresaRule = ['required', 'exists:empresas,id'];
+
+        if ($tutor) {
+            $empresaRule[] = function ($attribute, $value, $fail) use ($tutor) {
+                if ((int) $value !== (int) $tutor->empresa_id) {
+                    $fail('Este tutor ya está asignado a una empresa y no puede asignarse a otra.');
+                }
+            };
+        }
+
         return [
-            'empresa_id' => ['required', 'exists:empresas,id'],
+            'empresa_id' => $empresaRule,
             'nombre'     => ['required', 'string', 'max:150'],
             'email'      => [
                 'required',
                 'email',
                 'max:150',
-                Rule::unique('tutores', 'email')->ignore($tutorId),
+                \Illuminate\Validation\Rule::unique('tutores', 'email')->ignore($tutorId),
             ],
             'telefono'   => ['nullable', 'string', 'max:20'],
         ];
     }
+
 
     public function messages(): array
     {

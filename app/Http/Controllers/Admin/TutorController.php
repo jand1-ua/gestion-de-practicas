@@ -48,14 +48,23 @@ class TutorController extends Controller
         return view('admin.tutores.edit', compact('tutor', 'empresas'));
     }
 
-    public function update(TutorRequest $request, Tutor $tutor)
+    public function update(\App\Http\Requests\Admin\TutorRequest $request, \App\Models\Tutor $tutor)
     {
-        $tutor->update($request->validated());
+        $data = $request->validated();
+
+        if ((int) $data['empresa_id'] !== (int) $tutor->empresa_id) {
+            return redirect()
+                ->route('admin.tutores.edit', $tutor)
+                ->with('error', 'Este tutor ya está asignado a una empresa y no puede asignarse a otra.');
+        }
+
+        $tutor->update($data);
 
         return redirect()
             ->route('admin.tutores.index')
             ->with('success', 'Tutor actualizado correctamente.');
     }
+
 
     public function destroy(Tutor $tutor)
     {

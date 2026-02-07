@@ -71,5 +71,167 @@
     </div>
 
     {{ $alumnos->links() }}
+
+    <div class="code-panel" style="margin-top:16px;">
+        <h3>Código (Sesión 5)</h3>
+        <p>CRUD con Route::resource + controlador + validación (FormRequest) + modelo Eloquent.</p>
+
+        <div class="code-block">
+            <pre><code>@verbatim
+routes/web.php
+use App\Http\Controllers\Admin\AlumnoController as AdminAlumnoController;
+
+Route::middleware(['auth', 'role:coordinador'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::resource('alumnos', AdminAlumnoController::class);
+    });
+
+app/Http/Controllers/Admin/AlumnoController.php
+&lt;?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Alumno;
+use App\Http\Requests\Admin\AlumnoRequest;
+
+class AlumnoController extends Controller
+{
+    public function index()
+    {
+        $alumnos = Alumno::orderBy('id')->paginate(10);
+
+        return view('admin.alumnos.index', compact('alumnos'));
+    }
+
+    public function create()
+    {
+        return view('admin.alumnos.create');
+    }
+
+    public function store(AlumnoRequest $request)
+    {
+        $data = $request->validated();
+        Alumno::create($data);
+
+        return redirect()
+            ->route('admin.alumnos.index')
+            ->with('success', 'Alumno creado correctamente.');
+    }
+
+    public function show(Alumno $alumno)
+    {
+        return view('admin.alumnos.show', compact('alumno'));
+    }
+
+    public function edit(Alumno $alumno)
+    {
+        return view('admin.alumnos.edit', compact('alumno'));
+    }
+
+    public function update(AlumnoRequest $request, Alumno $alumno)
+    {
+        $data = $request->validated();
+        $alumno->update($data);
+
+        return redirect()
+            ->route('admin.alumnos.index')
+            ->with('success', 'Alumno actualizado correctamente.');
+    }
+
+    public function destroy(Alumno $alumno)
+    {
+        if ($alumno->practicas()->exists()) {
+            return redirect()
+                ->route('admin.alumnos.index')
+                ->with('error', 'No se puede eliminar un alumno con prácticas asociadas.');
+        }
+
+        $alumno->delete();
+
+        return redirect()
+            ->route('admin.alumnos.index')
+            ->with('success', 'Alumno eliminado correctamente.');
+    }
+}
+
+app/Http/Requests/Admin/AlumnoRequest.php
+&lt;?php
+
+namespace App\Http\Requests\Admin;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class AlumnoRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        $alumno = $this->route('alumno');
+        $alumnoId = $alumno ? $alumno->id : null;
+
+        return [
+            'nombre' => ['required', 'string', 'max:150'],
+            'email'  => [
+                'required',
+                'email',
+                'max:150',
+                Rule::unique('alumnos', 'email')->ignore($alumnoId),
+            ],
+            'grado'  => ['required', 'string', 'max:150'],
+            'curso'  => ['required', 'string', 'max:10'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'nombre.required' => 'El nombre es obligatorio.',
+            'email.required'  => 'El email es obligatorio.',
+            'email.email'     => 'El email no tiene un formato válido.',
+            'email.unique'    => 'Ya existe un alumno con ese email.',
+            'grado.required'  => 'El grado es obligatorio.',
+            'curso.required'  => 'El curso es obligatorio.',
+        ];
+    }
+}
+
+app/Models/Alumno.php
+&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Alumno extends Model
+{
+    use HasFactory;
+
+    protected $table = 'alumnos';
+
+    protected $fillable = [
+        'nombre',
+        'email',
+        'grado',
+        'curso',
+    ];
+
+    public function practicas(): HasMany
+    {
+        return $this->hasMany(Practica::class);
+    }
+}
+@endverbatim</code></pre>
+        </div>
+    </div>
 </div>
 @endsection

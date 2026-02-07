@@ -14,11 +14,8 @@ class PracticaController extends Controller
 {
     public function index(Request $request)
     {
-        // Construimos la consulta base con las relaciones necesarias
-        $query = Practica::with(['alumno', 'empresa', 'tutor'])
-            ->orderBy('id');
+        $query = Practica::with(['alumno', 'empresa', 'tutor'])->orderBy('id');
 
-        // Filtros opcionales
         if ($request->filled('estado')) {
             $query->where('estado', $request->estado);
         }
@@ -35,15 +32,12 @@ class PracticaController extends Controller
             $query->where('tutor_id', $request->tutor_id);
         }
 
-        // Paginación (10 por página) y preservamos los filtros en los enlaces
         $practicas = $query->paginate(10)->appends($request->query());
 
-        // Listas auxiliares para los combos de filtro
         $alumnos  = Alumno::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $tutores  = Tutor::orderBy('nombre')->get();
 
-        // Estados válidos 
         $estados = [
             ''           => 'Todos',
             'en_curso'   => 'En curso',
@@ -71,7 +65,12 @@ class PracticaController extends Controller
 
     public function store(PracticaRequest $request)
     {
-        Practica::create($request->validated());
+        $data = $request->validated();
+
+        $tutor = Tutor::findOrFail($data['tutor_id']);
+        $data['empresa_id'] = $tutor->empresa_id;
+
+        Practica::create($data);
 
         return redirect()
             ->route('admin.practicas.index')
@@ -96,7 +95,12 @@ class PracticaController extends Controller
 
     public function update(PracticaRequest $request, Practica $practica)
     {
-        $practica->update($request->validated());
+        $data = $request->validated();
+
+        $tutor = Tutor::findOrFail($data['tutor_id']);
+        $data['empresa_id'] = $tutor->empresa_id;
+
+        $practica->update($data);
 
         return redirect()
             ->route('admin.practicas.index')
