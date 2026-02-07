@@ -8,15 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    /**
-     * Mostrar formulario de login.
-     */
+    
     public function showLoginForm()
     {
         if (Auth::check()) {
             $route = $this->redirectRouteFor(Auth::user()->role);
 
-            // Si el rol no está reconocido, evitamos bucle: cerramos sesión y mostramos login
             if ($route === 'login') {
                 Auth::logout();
                 request()->session()->invalidate();
@@ -33,9 +30,7 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    /**
-     * Procesar login.
-     */
+    
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -56,7 +51,6 @@ class LoginController extends Controller
         $role = Auth::user()->role;
         $route = $this->redirectRouteFor($role);
 
-        // Si el rol no está reconocido, evitamos bucle y damos feedback
         if ($route === 'login') {
             Auth::logout();
             $request->session()->invalidate();
@@ -70,9 +64,6 @@ class LoginController extends Controller
         return redirect()->route($route);
     }
 
-    /**
-     * Cerrar sesión.
-     */
     public function logout(Request $request)
     {
         Auth::logout();

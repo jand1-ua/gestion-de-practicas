@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class MensajeController extends Controller
 {
-    /**
-     * Listado de mensajes (recibidos y enviados)
-     */
     public function index()
     {
         $usuario = Auth::user();
@@ -30,11 +27,6 @@ class MensajeController extends Controller
         return view('mensajes.index', compact('usuario', 'recibidos', 'enviados'));
     }
 
-    /**
-     * Formulario de nuevo mensaje
-     * - Filtra los destinatarios según el rol.
-     * - Si viene ?destinatario_id=... (por “Responder”), lo preselecciona.
-     */
     public function create(Request $request)
     {
         $usuario = Auth::user();
@@ -42,7 +34,6 @@ class MensajeController extends Controller
 
         if ($usuario->role === 'coordinador') {
 
-            // Coordinador puede escribir a cualquiera menos a sí mismo
             $destinatarios = User::where('id', '!=', $usuario->id)
                 ->orderBy('name')
                 ->get();
@@ -51,7 +42,6 @@ class MensajeController extends Controller
 
             $coordinadores = User::where('role', 'coordinador')->get();
 
-            // Tutores con los que el alumno tiene alguna práctica
             $tutorIds = Practica::where('alumno_id', $usuario->alumno_id)
                 ->whereNotNull('tutor_id')
                 ->pluck('tutor_id')
@@ -71,7 +61,6 @@ class MensajeController extends Controller
 
             $coordinadores = User::where('role', 'coordinador')->get();
 
-            // Alumnos con los que el tutor tiene alguna práctica
             $alumnoIds = Practica::where('tutor_id', $usuario->tutor_id)
                 ->pluck('alumno_id')
                 ->unique()
@@ -87,7 +76,6 @@ class MensajeController extends Controller
                 ->values();
 
         } else {
-            // Cualquier otro rol: sólo permitir coordinadores
             $destinatarios = User::where('role', 'coordinador')
                 ->where('id', '!=', $usuario->id)
                 ->orderBy('name')
@@ -97,11 +85,6 @@ class MensajeController extends Controller
         return view('mensajes.create', compact('usuario', 'destinatarios', 'destinatarioId'));
     }
 
-    /**
-     * Guarda un mensaje
-     * - Valida campos.
-     * - Si es conversación alumno–tutor, comprueba que tengan alguna práctica en común.
-     */
     public function store(Request $request)
     {
         $usuario = Auth::user();
@@ -114,7 +97,6 @@ class MensajeController extends Controller
 
         $destinatario = User::findOrFail($validated['destinatario_id']);
 
-        // ¿Es una comunicación alumno–tutor?
         $esAlumnoTutor =
             ($usuario->role === 'alumno' && $destinatario->role === 'tutor') ||
             ($usuario->role === 'tutor'  && $destinatario->role === 'alumno');
@@ -154,11 +136,6 @@ class MensajeController extends Controller
             ->with('success', 'Mensaje enviado correctamente.');
     }
 
-    /**
-     * Muestra un mensaje concreto
-     * - Sólo remitente o destinatario lo pueden ver.
-     * - Si soy destinatario, se marca como leído.
-     */
     public function show(Mensaje $mensaje)
     {
         $usuario = Auth::user();

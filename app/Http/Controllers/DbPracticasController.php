@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class DbPracticasController extends Controller
 {
-    // Listado de alumnos desde la BD
     public function alumnos()
     {
         $alumnos = DB::table('alumnos')
@@ -19,7 +18,6 @@ class DbPracticasController extends Controller
         ]);
     }
 
-    // Listado de prácticas con joins para ver alumno, empresa y tutor
     public function practicas()
     {
         $practicas = DB::table('practicas')

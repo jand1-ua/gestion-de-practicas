@@ -26,7 +26,7 @@ class AlumnoRequest extends FormRequest
                 Rule::unique('alumnos', 'email')->ignore($alumnoId),
             ],
             'grado'  => ['required', 'string', 'max:150'],
-            'curso'  => ['required', 'string', 'max:10'], // valores tipo '3º', '4º'
+            'curso'  => ['required', 'string', 'max:10'], 
         ];
     }
 

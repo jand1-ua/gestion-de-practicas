@@ -15,7 +15,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Usuario administrador
         User::updateOrCreate(
             ['email' => 'coordinador@example.com'],
             [
@@ -27,7 +26,6 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Usuarios para cada alumno
         Alumno::all()->each(function (Alumno $alumno) {
             User::updateOrCreate(
                 ['email' => $alumno->email],
@@ -41,7 +39,6 @@ class UserSeeder extends Seeder
             );
         });
 
-        // Usuarios para cada tutor
         Tutor::all()->each(function (Tutor $tutor) {
             User::updateOrCreate(
                 ['email' => $tutor->email],

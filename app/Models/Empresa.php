@@ -21,8 +21,6 @@ class Empresa extends Model
         'telefono_contacto',
     ];
 
-    
-    // Una empresa puede tener muchas prácticas.
      
     public function practicas(): HasMany
     {

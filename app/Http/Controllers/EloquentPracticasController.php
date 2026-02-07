@@ -8,11 +8,9 @@ use App\Models\Practica;
 class EloquentPracticasController extends Controller
 {
     
-    // Listado de alumnos con nº de prácticas (usando relaciones).
-
+    
     public function alumnos()
     {
-        // Carga todos los alumnos con sus prácticas
         $alumnos = Alumno::with('practicas')
             ->orderBy('id')
             ->get();
@@ -20,8 +18,6 @@ class EloquentPracticasController extends Controller
         return view('eloquent.alumnos', compact('alumnos'));
     }
 
-    
-    // Listado de prácticas con su alumno, empresa y tutor.
     
     public function practicas()
     {

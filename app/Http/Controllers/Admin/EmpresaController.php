@@ -51,7 +51,6 @@ class EmpresaController extends Controller
 
     public function destroy(Empresa $empresa)
     {
-        // Restricción: no eliminar si tiene prácticas asociadas
         if ($empresa->practicas()->exists()) {
             return redirect()
                 ->route('admin.empresas.index')

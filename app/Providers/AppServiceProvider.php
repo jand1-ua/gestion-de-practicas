@@ -20,7 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Paginación con estilos propios (sin depender de Tailwind/Bootstrap)
         Paginator::defaultView('partials.pagination');
         Paginator::defaultSimpleView('partials.pagination-simple');
     }

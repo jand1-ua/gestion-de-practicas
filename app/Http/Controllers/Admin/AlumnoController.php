@@ -54,7 +54,6 @@ class AlumnoController extends Controller
 
     public function destroy(Alumno $alumno)
     {
-        // Restricción típica: no borrar si tiene prácticas asociadas
         if ($alumno->practicas()->exists()) {
             return redirect()
                 ->route('admin.alumnos.index')

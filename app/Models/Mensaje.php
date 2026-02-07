@@ -16,7 +16,7 @@ class Mensaje extends Model
         'remitente_id',
         'destinatario_id',
         'asunto',
-        'cuerpo',      // <- clave
+        'cuerpo',      
         'practica_id',
         'leido_en',
     ];
