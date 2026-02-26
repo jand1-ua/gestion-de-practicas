@@ -80,7 +80,9 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:alumno'])
     ->get('/area/alumno', function () {
         $user = Auth::user();
-        $alumno = $user->alumno ? $user->alumno->load(['practicas.empresa', 'practicas.tutor']) : null;
+        $alumno = $user->alumno()
+            ->with(['practicas.empresa', 'practicas.tutor'])
+            ->first();
 
         return view('areas.alumno', compact('user', 'alumno'));
     })
@@ -90,13 +92,15 @@ Route::middleware(['auth', 'role:alumno'])
 Route::middleware(['auth', 'role:tutor'])
     ->get('/area/tutor', function () {
         $user = Auth::user();
-        $tutor = $user->tutor ? $user->tutor->load(['practicas.alumno', 'practicas.empresa']) : null;
+        $tutor = $user->tutor()
+            ->with(['practicas.alumno', 'practicas.empresa'])
+            ->first();
 
         return view('areas.tutor', compact('user', 'tutor'));
     })
     ->name('area.tutor');
 
-// Área de coordinador (opcional: redirige al dashboard)
+// Área de coordinador 
 Route::middleware(['auth', 'role:coordinador'])
     ->get('/area/coordinador', function () {
         return redirect()->route('admin.dashboard');

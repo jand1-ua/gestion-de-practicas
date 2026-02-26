@@ -17,6 +17,10 @@ class PracticaRequest extends FormRequest
     {
         $tutorId = $this->input('tutor_id');
 
+        if ($this->filled('empresa_id')) {
+            return;
+        }
+
         if ($tutorId) {
             $tutor = Tutor::find($tutorId);
 

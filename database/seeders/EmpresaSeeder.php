@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Empresa;
 
 class EmpresaSeeder extends Seeder
 {
@@ -13,27 +12,28 @@ class EmpresaSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('empresas')->insert([
+        Empresa::updateOrCreate(
+            ['cif' => 'B12345678'],
             [
-                'nombre' => 'Tech Solutions S.L.',
-                'cif' => 'B12345678',
-                'sector' => 'Tecnología',
-                'ciudad' => 'Alicante',
-                'email_contacto' => 'contacto@techsolutions.com',
+                'nombre'            => 'Tech Solutions S.L.',
+                'sector'            => 'Tecnología',
+                'ciudad'            => 'Alicante',
+                'email_contacto'    => 'contacto@techsolutions.com',
                 'telefono_contacto' => '965000111',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            ]
+        );
+
+        Empresa::updateOrCreate(
+            ['cif' => 'A87654321'],
             [
-                'nombre' => 'SoftEdu S.A.',
-                'cif' => 'A87654321',
-                'sector' => 'Formación',
-                'ciudad' => 'Elche',
-                'email_contacto' => 'info@softedu.com',
+                'nombre'            => 'SoftEdu S.A.',
+                'sector'            => 'Formación',
+                'ciudad'            => 'Elche',
+                'email_contacto'    => 'info@softedu.com',
                 'telefono_contacto' => '966111222',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+            ]
+        );
+
+        Empresa::factory(8)->create();
     }
 }

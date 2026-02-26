@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Practica extends Model
@@ -21,6 +22,21 @@ class Practica extends Model
         'estado',
         'observaciones',
     ];
+
+    protected $casts = [
+        'fecha_inicio' => 'date',
+        'fecha_fin'    => 'date',
+    ];
+
+    public function scopeWithRelations(Builder $query): Builder
+    {
+        return $query->with(['alumno', 'empresa', 'tutor']);
+    }
+
+    public function scopeByEstado(Builder $query, string $estado): Builder
+    {
+        return $query->where('estado', $estado);
+    }
 
     
     public function alumno(): BelongsTo

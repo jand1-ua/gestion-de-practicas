@@ -26,11 +26,16 @@ return new class extends Migration
                   ->constrained('tutores')
                   ->restrictOnDelete();
 
-            $table->date('fecha_inicio')->nullable();
+            $table->date('fecha_inicio');
             $table->date('fecha_fin')->nullable();
 
-            $table->string('estado', 20)->default('pendiente'); // pendiente | en_curso | finalizada
+            $table->string('estado', 20)->default('pendiente'); 
             $table->text('observaciones')->nullable();
+
+            
+            $table->index(['estado', 'empresa_id']);
+            $table->index(['alumno_id', 'estado']);
+            $table->index('fecha_inicio');
 
             $table->timestamps();
         });

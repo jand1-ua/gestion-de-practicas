@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('tutores', function (Blueprint $table) {
             $table->id();
             $table->foreignId('empresa_id')
-                  ->contrained('empresas')
-                  ->restrictOnDelete(); // no permite borrar
+                  ->constrained('empresas')
+                  ->restrictOnDelete(); 
             $table->string('nombre');
-            $table->string('email')->nullable();
+            $table->index('nombre');
+            $table->string('email')->unique();
             $table->string('telefono')->nullable();
             $table->timestamps();
         });

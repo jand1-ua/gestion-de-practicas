@@ -40,7 +40,7 @@ class User extends Authenticatable
     
     public function isAdmin(): bool
     {
-        return $this->role === 'coordinador';
+        return in_array($this->role, ['coordinador', 'admin'], true);
     }
 
     public function isAlumno(): bool

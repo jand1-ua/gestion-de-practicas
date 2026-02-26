@@ -5,12 +5,12 @@
 @section('content')
 <div class="pagehead">
     <div>
-        <h2>Demo: prácticas</h2>
+        <h2>Prácticas (demo)</h2>
         <p>Listado generado desde clases de dominio (sin base de datos).</p>
     </div>
 
     <div class="actions">
-        <a class="btn" href="{{ route('demo.alumnos') }}">Ver alumnos (demo)</a>
+        <a class="btn" href="{{ route('demo.alumnos') }}">Alumnos (demo)</a>
         <a class="btn" href="{{ route('sesiones') }}">Volver a sesiones</a>
     </div>
 </div>

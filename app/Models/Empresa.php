@@ -21,7 +21,11 @@ class Empresa extends Model
         'telefono_contacto',
     ];
 
-     
+    public function tutores(): HasMany
+    {
+        return $this->hasMany(Tutor::class);
+    }
+
     public function practicas(): HasMany
     {
         return $this->hasMany(Practica::class);

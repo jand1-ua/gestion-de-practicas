@@ -9,15 +9,17 @@ use App\Models\Tutor;
 use App\Models\Practica;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\PracticaRequest;
+use App\Services\Practicas\AsignarPracticaService;
+use Illuminate\Support\Facades\Auth;
 
 class PracticaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Practica::with(['alumno', 'empresa', 'tutor'])->orderBy('id');
+        $query = Practica::withRelations()->orderBy('id');
 
         if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+            $query->byEstado($request->estado);
         }
 
         if ($request->filled('empresa_id')) {
@@ -67,10 +69,9 @@ class PracticaController extends Controller
     {
         $data = $request->validated();
 
-        $tutor = Tutor::findOrFail($data['tutor_id']);
-        $data['empresa_id'] = $tutor->empresa_id;
+        $coordinador = Auth::user();
 
-        Practica::create($data);
+        app(AsignarPracticaService::class)->asignar($data, $coordinador);
 
         return redirect()
             ->route('admin.practicas.index')
@@ -98,7 +99,13 @@ class PracticaController extends Controller
         $data = $request->validated();
 
         $tutor = Tutor::findOrFail($data['tutor_id']);
-        $data['empresa_id'] = $tutor->empresa_id;
+        $data['empresa_id'] = $data['empresa_id'] ?? $tutor->empresa_id;
+
+        if ((int) $data['empresa_id'] !== (int) $tutor->empresa_id) {
+            return back()->withErrors([
+                'empresa_id' => 'La empresa debe coincidir con la empresa del tutor seleccionado.',
+            ])->withInput();
+        }
 
         $practica->update($data);
 

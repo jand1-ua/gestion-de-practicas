@@ -1,45 +1,21 @@
-Iteración 1 (carpeta sesion_1):
+# README · Ejecuciones por sesión (comandos de terminal)
 
--> probar código de 1-arrays: 
+> Todos los comandos se ejecutan desde la **raíz del proyecto** (donde está `artisan`), salvo que se indique lo contrario.  
+> Si acabas de clonar el repo, empieza por “Preparación común”.
 
-php sesion_1/1-arrays/demo_listados.php
+---
 
--> Probar código de 2-poo:
+## Preparación común (una sola vez)
+### 1) Instalar dependencias PHP
+```bash
+composer install
+```
 
-php sesion_1/2-poo/demo_poo.php
+### 3) Elegir base de datos (recomendado: MySQL)
 
--> Probar código de 3-namespaces:
-
-php sesion_1/3-namespaces/demo_namespaces.php
-
---------------------------------------------------------
-
-Iteración 2 ejecutar en la raíz del proyecto:
-
-php artisan make:controller DemoPracticasController
-
-- Esto crea app/Http/Controllers/DemoPracticasController.php
-
-- En la ruta resources/views/demo/... están las vistas de los Domains
-
-- Creación de test unitarios (Unit) para el dominio Practica:
-
-php artisan make:test PracticaDomainTest --unit
-
-- Creación de test de rutas (Feature):
-
-php artisan make:test DemoPracticasControllerTest
-
-- Para ejecutar los test en el terminal:
-
-php artisan test
-
---------------------------------------------------------
-
-Iteración 3: Base de datos + Query Builder
-
-- Crear una base de datos mysql como se explica en los pdf de las sesiones prácticas. Una vez dentro de MySQL se puede introducir este código para crear la base de datos con el mismo nombre:
-
+#### Opción A · MySQL 
+1) Crear BD y usuario (en MySQL):
+```sql
 CREATE DATABASE IF NOT EXISTS gestion_practicas
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
@@ -48,175 +24,200 @@ CREATE USER IF NOT EXISTS 'laravel'@'localhost'
   IDENTIFIED BY 'laravel123';
 
 GRANT ALL PRIVILEGES ON gestion_practicas.* TO 'laravel'@'localhost';
-
 FLUSH PRIVILEGES;
-EXIT;
+```
 
-- Configurar en el .env:
-
+2) Configurar `.env`:
+```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=gestion_practicas
-DB_USERNAME=root
-DB_PASSWORD=tu_password_aqui
+DB_USERNAME=laravel
+DB_PASSWORD=laravel123
+```
 
-- Desde la raíz del proyecto en una terminal ejecutar lo siguiente para crear las migraciones de la base de datos:
-
-php artisan make:migration create_alumnos_table
-php artisan make:migration create_empresas_table
-php artisan make:migration create_tutores_table
-php artisan make:migration create_practicas_table
-
-IMPORTANTE -> La migración de prácticas tiene que estar de última
-
-- Para ejecutar las migraciones:
-
-php artisan migrate
-
-Para ejecutar de nuevo otra migración con algún cambio:
-
-php artisan migrate:fresh
-
-- Crear seeders para rellenar la base de datos:
-
-php artisan make:seeder AlumnoSeeder
-php artisan make:seeder EmpresaSeeder
-php artisan make:seeder TutorSeeder
-php artisan make:seeder PracticaSeeder
-
-- Para ejecutar los seeders:
-
-php artisan db:seed
-
-Si se quiere limpiar todo y ejecutar desde cero:
-
+### 4) Crear tablas y cargar datos de ejemplo
+```bash
 php artisan migrate:fresh --seed
+```
 
-- Crear controlador de datos:
+### 5) Levantar servidor local
+```bash
+php artisan serve
+```
 
-php artisan make:controller DbPracticasController
+---
 
-Se genera en app/Http/Controllers/DbPracticasController.php
+# Sesión 1 · PHP (carpeta `sesion_1/`) — ejecución CLI
+> Esta sesión NO usa Laravel (son scripts PHP sueltos).
 
---------------------------------------------------------
-Iteración 4: Eloquent + relaciones
+```bash
+php sesion_1/1-arrays/demo_listados.php
+php sesion_1/2-poo/demo_poo.php
+php sesion_1/3-namespaces/demo_namespaces.php
+```
 
-- Crear los modelos Eloquent (no usar -m para no generar nuevas migraciones):
+---
 
-php artisan make:model Alumno
-php artisan make:model Empresa
-php artisan make:model Tutor
-php artisan make:model Practica
+# Sesión 2 · Laravel básico (rutas “demo”, datos en memoria)
+1) Levantar servidor:
+```bash
+php artisan serve
+```
 
-Se crean en app/Models/
+2) (Opcional) Ejecutar tests relacionados:
+```bash
+php artisan test --filter DemoPracticasControllerTest
+php artisan test --filter PracticaDomainTest
+```
 
-- Creamos un controlador nuevo:
+Rutas para comprobar en navegador:
+- `/demo/alumnos`
+- `/demo/practicas`
+- `/sesiones`
 
-php artisan make:controller EloquentPracticasController
+---
 
-Se crea en app/Http/Controllers/EloquentPracticasController.php
+# Sesión 3 · Acceso a datos (Query Builder) + BD
+1) Preparar BD (ver “Preparación común”) y cargar datos:
+```bash
+php artisan migrate:fresh --seed
+```
 
-- Se puede probar en Tinker para ver como la clase Eloquent resuelve las relaciones de forma automática:
+2) Levantar servidor:
+```bash
+php artisan serve
+```
 
+Rutas para comprobar:
+- `/db/alumnos`
+- `/db/practicas`
+
+---
+
+# Sesión 4 · Eloquent ORM + relaciones
+1) Cargar BD:
+```bash
+php artisan migrate:fresh --seed
+```
+
+2) Probar relaciones con tinker:
+```bash
 php artisan tinker
+```
 
-Dentro de tinker poner de una en una las siguientes instrucciones:
-
-App\Models\Alumno::first();
+Dentro de tinker (una por línea):
+```php
 App\Models\Alumno::with('practicas')->first()->practicas;
+App\Models\Empresa::with('tutores')->first()->tutores;
 App\Models\Practica::with(['alumno','empresa','tutor'])->first();
+```
 
---------------------------------------------------------
+3) (Opcional) Tests de relaciones:
+```bash
+php artisan test --filter EloquentPracticasTest
+```
 
-Iteración 5, 6 y 7: CRUD de alumnos, empresas, tutores y prácticas
+Rutas para comprobar:
+- `/eloquent/alumnos`
+- `/eloquent/practicas`
 
-La iteración 5 muestra el CRUD de alumnos.
+---
 
-La iteración 6 tiene el CRUD de empresas y tutores.
+# Sesiones 5–7 · CRUD (zona coordinador)
+1) Reset + seed:
+```bash
+php artisan migrate:fresh --seed
+```
 
-La iteración 7 muestra el CRUD de las prácticas que es el más complejo ya que contiene claves foraneas con las demás clases
+2) Servidor:
+```bash
+php artisan serve
+```
 
---------------------------------------------------------
-Iteración 8: Validación de formularios
+3) Login (coordinador):
+- Email: `coordinador@example.com`
+- Password: `coordinador123`
 
-En esta iteracion se crean los Request de las entidades de la base de datos y ajustamos los Controllers para que tengan en cuenta los Request.
+Zona admin (CRUD):
+- `/admin/alumnos`
+- `/admin/empresas`
+- `/admin/tutores`
+- `/admin/practicas`
 
-Hay unos test que hacen pruebas básicas para comprobar que las validaciones funcionan correctamente (AdminCrudTest)
+---
 
---------------------------------------------------------
-Iteración 9: Listado de prácticas con filtros y paginación
+# Sesión 8 · Validación de formularios (FormRequest)
+Tests de validación (CRUD admin):
+```bash
+php artisan test --filter AdminCrudTest
+```
 
-Se modifica PracticaController.php para que ahora el index() en vez de devolver un get() sin filtros, devuelva un Request y filtros.
+---
 
-También se actualiza index.blade.php para que use filtros y paginación.
+# Sesión 9 · Filtros + paginación en prácticas
+1) Reset + seed:
+```bash
+php artisan migrate:fresh --seed
+```
 
-También añadimos un test en AdminCrudTest para comprobar el funcionamiento del filtro.
+2) Test del filtro:
+```bash
+php artisan test --filter AdminCrudTest
+```
 
---------------------------------------------------------
-Iteración 10: Autenticación + roles + área por tipo de usuario
+Comprobación manual (logueado como coordinador):
+- `/admin/practicas?estado=pendiente`
 
-Usaremos los modelos estándar de Laravel, extendidos con roles -> admin, alumno y tutor
+---
 
-Creamos dos nuevas migraciones una para crear la tabla user y otra para los roles (importante el orden, primero users y después roles):
+# Sesión 10 · Autenticación + roles + áreas privadas
+1) Reset + seed (crea usuarios por rol):
+```bash
+php artisan migrate:fresh --seed
+```
 
-php artisan make:migration create_users_table
+2) Servidor:
+```bash
+php artisan serve
+```
 
-php artisan make:migration add_role_relations_to_users_table
+Credenciales:
+- Coordinador: `coordinador@example.com` / `coordinador123`
+- Alumnos (seed):
+  - `ana.garcia@example.com` / `alumno123`
+  - `luis.perez@example.com` / `alumno123`
+  - `maria.lopez@example.com` / `alumno123`
+- Tutores (seed):
+  - `carlos.ruiz@techsolutions.com` / `tutor123`
+  - `elena.martinez@softedu.com` / `tutor123`
 
-Para crear la carpeta middleware junto con el fichero CheckRole.php ejecutar en terminal en la ubicación del proyecto:
+Tests de roles:
+```bash
+php artisan test --filter RolesTest
+```
 
-php artisan make:middleware CheckRole
+---
 
-Hay que registrar el middleware en boostrap/app.php para registrar el alias role
+# Sesión 11 · Mensajería interna
+1) Reset + seed:
+```bash
+php artisan migrate:fresh --seed
+```
 
-En esta sesión también se creó la carpeta Auth en Controllers junto con el controlador del Login (LoginController.php)
+2) Servidor:
+```bash
+php artisan serve
+```
 
-Se modificó las rutas de web.php para que usen los middleware de roles.
+Mensajes (requiere login):
+- Listado: `/mensajes`
+- Crear: `/mensajes/create`
 
-También se crearon las carpetas dentro de las vistas auth y areas.
+---
 
-Dentro de auth se creó el fichero login.blade.php que es la vista de la página login.
-
-Dentro de areas está alumno.blade.php y tutor.blade.php que contiene las paginas que se muestran cuando se inicia sesión con los respectivos roles.
-
-Alumnos:
-correos -> Están en el seeeder de alumno
-contraseña -> alumno123
-
-Tutores:
-correos -> Están en el seeder de tutores
-contraseña -> tutor123
-
-Administrador:
-correo -> admin@example.com
-contraseña -> admin123
-
-Ahora cuando iniciamos sesion dependiendo del rol tendremos unos permisos específicos.
-
-Se creó también el fichero RolesTest.php en "tests/Feature/RolesTest.php" para hacer pruebas de diferentes casuisticas para comprobar que los permisos de los distintos roles funcionan de la forma esperada.
-
---------------------------------------------------------
-Iteración 11: Mensajería
-
-Crear la migración para crear mensajes.
-
-php artisan make:migration create_mensajes_table
-
-Crear el modelo en app/Models/Mensaje.php
-
-Actualizar el modelo User para que acepte relaciones alumno/tutor y mensajería.
-
-Creamos el Request de mensajes que controla las relaciones que pueden tener mensajes entre sí:
-
-php artisan make:request MensajeRequest
-
-Creamos controlador para Mesanjes:
-
-php artisan make:controller MensajeController
-
-Creamos la carpeta mensaje en views, junto con sus respectivas páginas (create, index y show).
-
-Añadimos la ruta en web.php
-
-Añadimos un apartado de mensajería en welcome.blade.php 
+## Ejecutar toda la batería de tests (en cualquier momento)
+```bash
+php artisan test
+```

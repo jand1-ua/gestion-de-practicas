@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('email')->unique();
-            $table->string('grado')->nullable();
-            $table->string('curso')->nullable();
+            $table->index('nombre');
+            $table->string('grado');
+            $table->string('curso');
             $table->timestamps();
         });
     }

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Alumno;
 
 class AlumnoSeeder extends Seeder
 {
@@ -13,31 +12,21 @@ class AlumnoSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('alumnos')->insert([
-            [
-                'nombre' => 'Ana García',
-                'email' => 'ana.garcia@example.com',
-                'grado' => 'Ingeniería Informática',
-                'curso' => '4º',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nombre' => 'Luis Pérez',
-                'email' => 'luis.perez@example.com',
-                'grado' => 'Ingeniería Informática',
-                'curso' => '3º',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'nombre' => 'María López',
-                'email' => 'maria.lopez@example.com',
-                'grado' => 'Ingeniería Informática',
-                'curso' => '4º',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+        Alumno::updateOrCreate(
+            ['email' => 'ana.garcia@example.com'],
+            ['nombre' => 'Ana García', 'grado' => 'Ingeniería Informática', 'curso' => '4º']
+        );
+
+        Alumno::updateOrCreate(
+            ['email' => 'luis.perez@example.com'],
+            ['nombre' => 'Luis Pérez', 'grado' => 'Ingeniería Informática', 'curso' => '3º']
+        );
+
+        Alumno::updateOrCreate(
+            ['email' => 'maria.lopez@example.com'],
+            ['nombre' => 'María López', 'grado' => 'Ingeniería Informática', 'curso' => '4º']
+        );
+
+        Alumno::factory(10)->create();
     }
 }
