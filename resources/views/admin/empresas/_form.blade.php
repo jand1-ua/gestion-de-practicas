@@ -1,5 +1,6 @@
 @php
     $empresa = $empresa ?? new \App\Models\Empresa();
+    $sectoresDisponibles = \App\Models\Empresa::sectoresDisponibles();
 @endphp
 
 @csrf
@@ -17,7 +18,15 @@
 
     <div class="field">
         <label class="label" for="sector">Sector</label>
-        <input class="control" type="text" id="sector" name="sector" value="{{ old('sector', $empresa->sector ?? '') }}" required>
+        <select class="select" id="sector" name="sector" required>
+            <option value="">-- Selecciona un sector --</option>
+            @foreach($sectoresDisponibles as $sector)
+                <option value="{{ $sector }}" @selected(old('sector', $empresa->sector ?? '') === $sector)>
+                    {{ $sector }}
+                </option>
+            @endforeach
+        </select>
+        <div class="help">Se usa una lista cerrada para evitar errores por texto libre.</div>
     </div>
 </div>
 
@@ -34,6 +43,17 @@
 
     <div class="field">
         <label class="label" for="telefono_contacto">Teléfono de contacto</label>
-        <input class="control" type="text" id="telefono_contacto" name="telefono_contacto" value="{{ old('telefono_contacto', $empresa->telefono_contacto ?? '') }}" required>
+        <input
+            class="control"
+            type="tel"
+            id="telefono_contacto"
+            name="telefono_contacto"
+            value="{{ old('telefono_contacto', $empresa->telefono_contacto ?? '') }}"
+            inputmode="tel"
+            pattern="^\+?[0-9\s\-()]{9,20}$"
+            placeholder="Ej. 965000111 o +34965000111"
+            required
+        >
+        <div class="help">Se admiten 9 a 15 dígitos. Puedes escribir espacios o guiones; el sistema los normaliza.</div>
     </div>
 </div>

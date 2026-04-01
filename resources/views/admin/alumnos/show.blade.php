@@ -7,7 +7,7 @@
 
 <div class="pagehead">
     <div>
-        <h2>Alumno #{{ $alumno->id }}</h2>
+        <h2>{{ $alumno->nombre }}</h2>
         <p>Detalle de la ficha del alumno seleccionado.</p>
     </div>
 
@@ -40,17 +40,29 @@
     </div>
 
     <div class="card">
-        <h3>Acciones</h3>
-        <p class="muted">Accesos rápidos relacionados.</p>
+        <h3>Acceso al portal</h3>
+
+        @if($alumno->user)
+            <div class="portal-access-status is-active">
+                <strong>Acceso activo</strong>
+                <div class="muted">Cuenta enlazada con el email <strong>{{ $alumno->user->email }}</strong>.</div>
+                @if($alumno->user->must_change_password)
+                    <div class="help">El usuario todavía debe cambiar su contraseña temporal.</div>
+                @endif
+            </div>
+        @else
+            <div class="portal-access-status">
+                <strong>Sin acceso generado</strong>
+                <div class="muted">Puedes generar sus credenciales desde la pantalla de edición.</div>
+            </div>
+        @endif
+
+        <hr class="hr">
 
         <div class="actions" style="margin-top:12px;">
             <a class="btn" href="{{ route('admin.practicas.index', ['alumno_id' => $alumno->id]) }}">Ver prácticas del alumno</a>
             <a class="btn" href="{{ route('admin.practicas.create') }}">Crear práctica</a>
         </div>
-
-        <hr class="hr">
-
-        <div class="help">Consejo: usa el filtro de prácticas para localizar rápidamente las asignaciones.</div>
     </div>
 </div>
 @endsection

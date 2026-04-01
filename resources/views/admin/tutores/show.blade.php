@@ -7,7 +7,7 @@
 
 <div class="pagehead">
     <div>
-        <h2>Tutor #{{ $tutor->id }}</h2>
+        <h2>{{ $tutor->nombre }}</h2>
         <p>Detalle del tutor seleccionado.</p>
     </div>
 
@@ -40,17 +40,29 @@
     </div>
 
     <div class="card">
-        <h3>Acciones</h3>
-        <p class="muted">Accesos rápidos relacionados.</p>
+        <h3>Acceso al portal</h3>
+
+        @if($tutor->user)
+            <div class="portal-access-status is-active">
+                <strong>Acceso activo</strong>
+                <div class="muted">Cuenta enlazada con el email <strong>{{ $tutor->user->email }}</strong>.</div>
+                @if($tutor->user->must_change_password)
+                    <div class="help">El usuario todavía debe cambiar su contraseña temporal.</div>
+                @endif
+            </div>
+        @else
+            <div class="portal-access-status">
+                <strong>Sin acceso generado</strong>
+                <div class="muted">Puedes generar sus credenciales desde la pantalla de edición.</div>
+            </div>
+        @endif
+
+        <hr class="hr">
 
         <div class="actions" style="margin-top:12px;">
             <a class="btn" href="{{ route('admin.practicas.index', ['tutor_id' => $tutor->id]) }}">Ver prácticas del tutor</a>
             <a class="btn" href="{{ route('admin.practicas.create') }}">Crear práctica</a>
         </div>
-
-        <hr class="hr">
-
-        <div class="help">Nota: la mensajería está disponible desde la barra superior.</div>
     </div>
 </div>
 @endsection

@@ -17,12 +17,8 @@ class AlumnoFactory extends Factory
         return [
             'nombre' => fake()->name(),
             'email'  => fake()->unique()->safeEmail(),
-            'grado'  => fake()->randomElement([
-                'Ingeniería Informática',
-                'Ingeniería Industrial',
-                'Administración de Empresas',
-            ]),
-            'curso'  => fake()->randomElement(['1º', '2º', '3º', '4º']),
+            'grado'  => fake()->randomElement(Alumno::gradosDisponibles()),
+            'curso'  => fake()->randomElement(Alumno::cursosDisponibles()),
         ];
     }
 }

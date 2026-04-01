@@ -10,6 +10,19 @@ class Empresa extends Model
 {
     use HasFactory;
 
+    public const SECTORES_DISPONIBLES = [
+        'Tecnología',
+        'Consultoría',
+        'Industria',
+        'Servicios',
+        'Formación',
+        'Sanidad',
+        'Logística',
+        'Finanzas',
+        'Marketing y Comunicación',
+        'Turismo y Hostelería',
+    ];
+
     protected $table = 'empresas';
 
     protected $fillable = [
@@ -20,6 +33,11 @@ class Empresa extends Model
         'email_contacto',
         'telefono_contacto',
     ];
+
+    public static function sectoresDisponibles(): array
+    {
+        return self::SECTORES_DISPONIBLES;
+    }
 
     public function tutores(): HasMany
     {

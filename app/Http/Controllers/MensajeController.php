@@ -14,12 +14,12 @@ class MensajeController extends Controller
     {
         $usuario = Auth::user();
 
-        $recibidos = Mensaje::with('remitente')
+        $recibidos = Mensaje::with(['remitente.alumno', 'remitente.tutor', 'practica.alumno'])
             ->where('destinatario_id', $usuario->id)
             ->orderByDesc('created_at')
             ->paginate(10, ['*'], 'recibidos_page');
 
-        $enviados = Mensaje::with('destinatario')
+        $enviados = Mensaje::with(['destinatario.alumno', 'destinatario.tutor', 'practica.alumno'])
             ->where('remitente_id', $usuario->id)
             ->orderByDesc('created_at')
             ->paginate(10, ['*'], 'enviados_page');
@@ -34,13 +34,13 @@ class MensajeController extends Controller
 
         if ($usuario->role === 'coordinador') {
 
-            $destinatarios = User::where('id', '!=', $usuario->id)
+            $destinatarios = User::with(['alumno', 'tutor'])->where('id', '!=', $usuario->id)
                 ->orderBy('name')
                 ->get();
 
         } elseif ($usuario->role === 'alumno') {
 
-            $coordinadores = User::where('role', 'coordinador')->get();
+            $coordinadores = User::with(['alumno', 'tutor'])->where('role', User::ROLE_COORDINADOR)->get();
 
             $tutorIds = Practica::where('alumno_id', $usuario->alumno_id)
                 ->whereNotNull('tutor_id')
@@ -50,7 +50,7 @@ class MensajeController extends Controller
 
             $tutores = empty($tutorIds)
                 ? collect()
-                : User::whereIn('tutor_id', $tutorIds)->get();
+                : User::with(['alumno', 'tutor'])->whereIn('tutor_id', $tutorIds)->get();
 
             $destinatarios = $coordinadores->merge($tutores)
                 ->where('id', '!=', $usuario->id)
@@ -59,7 +59,7 @@ class MensajeController extends Controller
 
         } elseif ($usuario->role === 'tutor') {
 
-            $coordinadores = User::where('role', 'coordinador')->get();
+            $coordinadores = User::with(['alumno', 'tutor'])->where('role', User::ROLE_COORDINADOR)->get();
 
             $alumnoIds = Practica::where('tutor_id', $usuario->tutor_id)
                 ->pluck('alumno_id')
@@ -68,7 +68,7 @@ class MensajeController extends Controller
 
             $alumnos = empty($alumnoIds)
                 ? collect()
-                : User::whereIn('alumno_id', $alumnoIds)->get();
+                : User::with(['alumno', 'tutor'])->whereIn('alumno_id', $alumnoIds)->get();
 
             $destinatarios = $coordinadores->merge($alumnos)
                 ->where('id', '!=', $usuario->id)
@@ -76,7 +76,7 @@ class MensajeController extends Controller
                 ->values();
 
         } else {
-            $destinatarios = User::where('role', 'coordinador')
+            $destinatarios = User::with(['alumno', 'tutor'])->where('role', User::ROLE_COORDINADOR)
                 ->where('id', '!=', $usuario->id)
                 ->orderBy('name')
                 ->get();
@@ -148,7 +148,7 @@ class MensajeController extends Controller
             $mensaje->update(['leido_en' => now()]);
         }
 
-        $mensaje->load(['remitente', 'destinatario']);
+        $mensaje->load(['remitente.alumno', 'remitente.tutor', 'destinatario.alumno', 'destinatario.tutor', 'practica.alumno', 'practica.empresa', 'practica.tutor']);
 
         return view('mensajes.show', compact('usuario', 'mensaje'));
     }

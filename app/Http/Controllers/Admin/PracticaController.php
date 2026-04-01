@@ -10,13 +10,18 @@ use App\Models\Practica;
 use Illuminate\Http\Request;
 use App\Http\Requests\Admin\PracticaRequest;
 use App\Services\Practicas\AsignarPracticaService;
+use App\Services\Practicas\NotificarPracticaService;
 use Illuminate\Support\Facades\Auth;
 
 class PracticaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Practica::withRelations()->orderBy('id');
+        $query = Practica::withRelations()->orderByDesc('fecha_inicio')->orderByDesc('id');
+
+        if ($request->filled('q')) {
+            $query->search(trim((string) $request->q));
+        }
 
         if ($request->filled('estado')) {
             $query->byEstado($request->estado);
@@ -34,7 +39,7 @@ class PracticaController extends Controller
             $query->where('tutor_id', $request->tutor_id);
         }
 
-        $practicas = $query->paginate(10)->appends($request->query());
+        $practicas = $query->paginate(10)->withQueryString();
 
         $alumnos  = Alumno::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
@@ -75,7 +80,8 @@ class PracticaController extends Controller
 
         return redirect()
             ->route('admin.practicas.index')
-            ->with('success', 'Práctica creada correctamente.');
+            ->with('success', 'Práctica creada correctamente.')
+            ->with('info', 'Se ha notificado automáticamente al alumno y al tutor vinculados, si disponen de acceso al portal.');
     }
 
     public function show(Practica $practica)
@@ -109,9 +115,12 @@ class PracticaController extends Controller
 
         $practica->update($data);
 
+        app(NotificarPracticaService::class)->notificarActualizacion($practica->fresh(['alumno', 'empresa', 'tutor']), Auth::user());
+
         return redirect()
             ->route('admin.practicas.index')
-            ->with('success', 'Práctica actualizada correctamente.');
+            ->with('success', 'Práctica actualizada correctamente.')
+            ->with('info', 'Se ha enviado una notificación interna a las cuentas vinculadas del alumno y del tutor.');
     }
 
     public function destroy(Practica $practica)

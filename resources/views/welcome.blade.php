@@ -9,25 +9,26 @@
 
 <div class="pagehead">
     <div>
-        <span class="kicker"><span class="dot"></span> Sistema activo · <span class="nowrap">Laravel v{{ Illuminate\Foundation\Application::VERSION }}</span></span>
-        <h2 style="margin:12px 0 6px; font-size:28px; line-height:1.12; letter-spacing:-0.4px;">Bienvenido a la plataforma de Gestión de Prácticas</h2>
+        <span class="kicker"><span class="dot"></span> Plataforma operativa</span>
+        <h2 style="margin:12px 0 6px; font-size:28px; line-height:1.12; letter-spacing:-0.4px;">Gestión integral de prácticas externas</h2>
         <p>
-            Centraliza el ciclo completo de prácticas: alta de alumnos, empresas y tutores, asignación de prácticas,
-            seguimiento y mensajería interna.
+            La aplicación centraliza la gestión de alumnos, empresas, tutores, asignaciones de prácticas
+            y comunicación interna en un único entorno de trabajo.
         </p>
     </div>
 
     <div class="actions">
         @if ($user)
-            @if ($user->role === 'coordinador')
-                <a class="btn" href="{{ route('admin.practicas.index') }}">Gestionar prácticas</a>
-            @elseif ($user->role === 'alumno')
-                <a class="btn" href="{{ route('area.alumno') }}">Ver mi área</a>
-            @elseif ($user->role === 'tutor')
-                <a class="btn" href="{{ route('area.tutor') }}">Ver mi área</a>
+            @if ($user->isCoordinator())
+                <a class="btn btn-primary" href="{{ route('admin.practicas.index') }}">Acceder al panel</a>
+            @elseif ($user->isAlumno())
+                <a class="btn btn-primary" href="{{ route('area.alumno') }}">Ir a mi área</a>
+            @elseif ($user->isTutor())
+                <a class="btn btn-primary" href="{{ route('area.tutor') }}">Ir a mi área</a>
             @endif
+            <a class="btn" href="{{ route('mensajes.index') }}">Abrir mensajería</a>
         @else
-            <a class="btn" href="{{ route('login') }}">Acceder</a>
+            <a class="btn btn-primary" href="{{ route('login') }}">Iniciar sesión</a>
         @endif
     </div>
 </div>
@@ -35,40 +36,44 @@
 <div class="grid-2">
     <div class="stack">
         <div class="card">
-            <h3>Qué puedes hacer</h3>
-            <p>Funciones principales según tu rol.</p>
+            <h3>Módulos principales</h3>
+            <p>Acceso unificado a la operativa diaria de la plataforma.</p>
 
             <div class="grid-3" style="margin-top:12px;">
-                <div class="card" style="background: rgba(255,255,255,.06);">
-                    <h3>Gestión unificada</h3>
-                    <p>Alumnos, empresas, tutores y prácticas en un flujo consistente.</p>
+                <div class="card feature-card">
+                    <h3>Gestión académica</h3>
+                    <p>Altas, edición y seguimiento de alumnos, tutores y empresas colaboradoras.</p>
                 </div>
-                <div class="card" style="background: rgba(255,255,255,.06);">
-                    <h3>Seguimiento por rol</h3>
-                    <p>Accesos y acciones adaptados a coordinador, alumno y tutor.</p>
+                <div class="card feature-card">
+                    <h3>Asignación de prácticas</h3>
+                    <p>Registro del estado de cada práctica, fechas y responsables asociados.</p>
                 </div>
-                <div class="card" style="background: rgba(255,255,255,.06);">
+                <div class="card feature-card">
                     <h3>Mensajería interna</h3>
-                    <p>Comunicación directa dentro de la plataforma, con bandeja y respuestas.</p>
+                    <p>Comunicación directa entre coordinación, alumnado y tutores desde la propia aplicación.</p>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3>Atajos recomendados</h3>
-            <p>Entra rápido a los módulos más usados.</p>
+            <h3>Accesos rápidos</h3>
+            <p>Entradas directas a las secciones más usadas según el rol activo.</p>
 
             <div class="actions" style="margin-top:12px;">
                 @if ($user)
                     <a class="btn" href="{{ route('mensajes.index') }}">Mensajería</a>
-                    @if ($user->role === 'coordinador')
+                    @if ($user->isCoordinator())
                         <a class="btn" href="{{ route('admin.alumnos.index') }}">Alumnos</a>
                         <a class="btn" href="{{ route('admin.empresas.index') }}">Empresas</a>
                         <a class="btn" href="{{ route('admin.tutores.index') }}">Tutores</a>
                         <a class="btn" href="{{ route('admin.practicas.index') }}">Prácticas</a>
+                    @elseif ($user->isAlumno())
+                        <a class="btn" href="{{ route('area.alumno') }}">Mi área</a>
+                    @elseif ($user->isTutor())
+                        <a class="btn" href="{{ route('area.tutor') }}">Mi área</a>
                     @endif
                 @else
-                    <a class="btn" href="{{ route('login') }}">Iniciar sesión</a>
+                    <a class="btn" href="{{ route('login') }}">Acceder</a>
                 @endif
             </div>
         </div>
@@ -79,25 +84,26 @@
 
         @if ($user)
             <p style="margin: 10px 0 0;">
-                <strong>{{ $user->name }}</strong>
+                <strong>{{ $user->profileName() }}</strong>
                 <span class="muted">· {{ $user->email }}</span>
             </p>
-            <p style="margin: 8px 0 0;" class="muted">Rol: <span class="badge badge-ok">{{ $user->role }}</span></p>
+            <p style="margin: 8px 0 0;" class="muted">Rol activo: <span class="badge badge-ok">{{ $user->roleLabel() }}</span></p>
 
             <hr class="hr">
 
             <div class="stack" style="gap:10px;">
-                @if ($user->role === 'coordinador')
-                    <a class="btn" href="{{ route('admin.dashboard') }}">Ir al panel</a>
-                @elseif ($user->role === 'alumno')
-                    <a class="btn" href="{{ route('area.alumno') }}">Ir a mi área</a>
-                @elseif ($user->role === 'tutor')
-                    <a class="btn" href="{{ route('area.tutor') }}">Ir a mi área</a>
+                @if ($user->isCoordinator())
+                    <a class="btn" href="{{ route('admin.dashboard') }}">Abrir panel de coordinación</a>
+                @elseif ($user->isAlumno())
+                    <a class="btn" href="{{ route('area.alumno') }}">Abrir mi área</a>
+                @elseif ($user->isTutor())
+                    <a class="btn" href="{{ route('area.tutor') }}">Abrir mi área</a>
                 @endif
+                <a class="btn" href="{{ route('mensajes.index') }}">Ir a mensajería</a>
             </div>
         @else
             <p class="muted" style="margin-top:10px;">
-                No has iniciado sesión. Accede para ver tu panel y funciones según rol.
+                Inicia sesión para acceder a las funciones correspondientes a tu rol dentro de la plataforma.
             </p>
 
             <hr class="hr">
@@ -108,16 +114,4 @@
         @endif
     </aside>
 </div>
-
-<section class="card" style="margin-top:18px;">
-    <h3>Sesiones y ejemplos de funcionamiento</h3>
-    <p class="muted" style="margin-top:8px;">
-        Esta sección reúne ejemplos guiados para ver cómo funciona la aplicación (rutas, vistas y operaciones típicas).
-        Haz clic para abrir el índice de sesiones y navegar por los ejemplos.
-    </p>
-
-    <div class="actions" style="margin-top:12px;">
-        <a class="btn btn-primary" href="{{ route('sesiones') }}">Ver sesiones / ejemplos</a>
-    </div>
-</section>
 @endsection

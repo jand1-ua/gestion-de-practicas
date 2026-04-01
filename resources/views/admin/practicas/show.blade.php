@@ -15,8 +15,8 @@
 
 <div class="pagehead">
     <div>
-        <h2>Práctica #{{ $practica->id }}</h2>
-        <p>Detalle de la asignación de prácticas.</p>
+        <h2>Detalle de la práctica</h2>
+        <p>Información de la asignación y del periodo de prácticas.</p>
     </div>
 
     <div class="actions">
@@ -31,22 +31,13 @@
 
         <div class="kv">
             <div class="k">Alumno</div>
-            <div class="v">
-                {{ $practica->alumno->nombre ?? '-' }}
-                <span class="muted-2">(#{{ $practica->alumno->id ?? '-' }})</span>
-            </div>
+            <div class="v">{{ $practica->alumno->nombre ?? '-' }}</div>
 
             <div class="k">Empresa</div>
-            <div class="v">
-                {{ $practica->empresa->nombre ?? '-' }}
-                <span class="muted-2">(#{{ $practica->empresa->id ?? '-' }})</span>
-            </div>
+            <div class="v">{{ $practica->empresa->nombre ?? '-' }}</div>
 
             <div class="k">Tutor</div>
-            <div class="v">
-                {{ $practica->tutor->nombre ?? '-' }}
-                <span class="muted-2">(#{{ $practica->tutor->id ?? '-' }})</span>
-            </div>
+            <div class="v">{{ $practica->tutor->nombre ?? '-' }}</div>
 
             <div class="k">Estado</div>
             <div class="v"><span class="badge {{ $badgeClass }}">{{ $estadoLabel }}</span></div>
@@ -58,13 +49,13 @@
 
         <div class="kv">
             <div class="k">Fecha inicio</div>
-            <div class="v">{{ $practica->fecha_inicio }}</div>
+            <div class="v">{{ optional($practica->fecha_inicio)->format('d/m/Y') }}</div>
 
             <div class="k">Fecha fin</div>
-            <div class="v">{{ $practica->fecha_fin ?? '—' }}</div>
+            <div class="v">{{ optional($practica->fecha_fin)->format('d/m/Y') ?: '—' }}</div>
 
             <div class="k">Observaciones</div>
-            <div class="v" style="white-space: pre-wrap; line-height:1.6;">{{ $practica->observaciones ?: '—' }}</div>
+            <div class="v practica-detail-text">{{ $practica->observaciones ?: '—' }}</div>
         </div>
 
         <hr class="hr">

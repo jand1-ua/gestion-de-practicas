@@ -7,7 +7,7 @@
     <div class="pagehead" style="margin-bottom:10px;">
         <div>
             <h2>Iniciar sesión</h2>
-            <p>Accede con tu email y contraseña. Según tu rol verás un área diferente.</p>
+            <p>Accede con tu email y contraseña. Según tu rol verás un área diferente. Si te han generado una contraseña temporal, se te pedirá cambiarla en el primer acceso.</p>
         </div>
     </div>
 

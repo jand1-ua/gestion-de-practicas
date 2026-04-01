@@ -17,15 +17,10 @@ class EmpresaFactory extends Factory
         return [
             'nombre'            => fake()->company(),
             'cif'               => fake()->unique()->regexify('[A-Z][0-9]{8}'),
-            'sector'            => fake()->randomElement([
-                'Tecnología',
-                'Consultoría',
-                'Industria',
-                'Servicios',
-            ]),
+            'sector'            => fake()->randomElement(Empresa::sectoresDisponibles()),
             'ciudad'            => fake()->city(),
             'email_contacto'    => fake()->companyEmail(),
-            'telefono_contacto' => fake()->phoneNumber(),
+            'telefono_contacto' => '+34' . fake()->numerify('#########'),
         ];
     }
 }

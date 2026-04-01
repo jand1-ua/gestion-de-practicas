@@ -12,6 +12,15 @@ class TutorRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'nombre' => $this->normalizeText($this->input('nombre')),
+            'email' => $this->normalizeEmail($this->input('email')),
+            'telefono' => $this->normalizePhone($this->input('telefono')),
+        ]);
+    }
+
     public function rules(): array
     {
         $tutor = $this->route('tutor');
@@ -34,12 +43,11 @@ class TutorRequest extends FormRequest
                 'required',
                 'email',
                 'max:150',
-                \Illuminate\Validation\Rule::unique('tutores', 'email')->ignore($tutorId),
+                Rule::unique('tutores', 'email')->ignore($tutorId),
             ],
-            'telefono'   => ['nullable', 'string', 'max:20'],
+            'telefono'   => ['required', 'regex:/^\+?[0-9]{9,15}$/'],
         ];
     }
-
 
     public function messages(): array
     {
@@ -50,6 +58,37 @@ class TutorRequest extends FormRequest
             'email.required'      => 'El email es obligatorio.',
             'email.email'         => 'El email no es válido.',
             'email.unique'        => 'Ya existe un tutor con ese email.',
+            'telefono.required'   => 'El teléfono es obligatorio.',
+            'telefono.regex'      => 'El teléfono debe tener entre 9 y 15 dígitos y solo puede incluir un + inicial.',
         ];
+    }
+
+    private function normalizeText(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return trim(preg_replace('/\s+/u', ' ', $value));
+    }
+
+    private function normalizeEmail(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return mb_strtolower(trim($value));
+    }
+
+    private function normalizePhone(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $normalized = preg_replace('/(?!^\+)\D+/', '', trim($value));
+
+        return $normalized === '' ? null : $normalized;
     }
 }

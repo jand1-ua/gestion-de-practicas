@@ -17,21 +17,26 @@
 </div>
 
 <div class="card">
-    <div class="actions" style="justify-content:space-between; width:100%; align-items:flex-end;">
-        <div class="field" style="max-width:320px;">
-            <label class="label" for="empresas-search">Buscar</label>
-            <input class="control" id="empresas-search" type="search" data-autofocus data-table-filter="empresas-table"
-                   placeholder="Nombre, CIF, sector, ciudad...">
-            <div class="help">Filtro local (no consulta la base de datos).</div>
+    <form method="GET" action="{{ route('admin.empresas.index') }}" class="search-toolbar">
+        <div class="field search-toolbar__field">
+            <label class="label" for="q">Buscar</label>
+            <input class="control" id="q" name="q" type="search" value="{{ $search ?? request('q') }}" data-autofocus
+                   placeholder="Nombre, CIF, sector, ciudad o contacto">
+            <div class="help">La búsqueda consulta toda la base de datos y se mantiene al paginar.</div>
         </div>
-        <div class="muted">{{ $empresas->total() }} registro(s)</div>
-    </div>
+
+        <div class="actions search-toolbar__actions">
+            <button class="btn btn-primary" type="submit">Buscar</button>
+            <a class="btn" href="{{ route('admin.empresas.index') }}">Limpiar</a>
+        </div>
+
+        <div class="muted search-toolbar__meta">{{ $empresas->total() }} registro(s)</div>
+    </form>
 
     <div class="table-wrap" style="margin-top:12px;">
-        <table class="table" id="empresas-table">
+        <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nombre</th>
                     <th>CIF</th>
                     <th>Sector</th>
@@ -43,7 +48,6 @@
             <tbody>
                 @forelse($empresas as $empresa)
                     <tr>
-                        <td class="muted">#{{ $empresa->id }}</td>
                         <td><a href="{{ route('admin.empresas.show', $empresa) }}"><strong>{{ $empresa->nombre }}</strong></a></td>
                         <td class="muted">{{ $empresa->cif }}</td>
                         <td>{{ $empresa->sector }}</td>
@@ -66,7 +70,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="muted">No hay empresas registradas.</td>
+                        <td colspan="6" class="muted">No se han encontrado empresas con los criterios indicados.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -74,167 +78,5 @@
     </div>
 
     {{ $empresas->links() }}
-
-    <div class="code-panel" style="margin-top:16px;">
-        <h3>Código (Sesión 5)</h3>
-        <p>CRUD con Route::resource + controlador + validación (FormRequest) + modelo Eloquent.</p>
-
-        <div class="code-block">
-            <pre><code>@verbatim
-routes/web.php
-use App\Http\Controllers\Admin\EmpresaController as AdminEmpresaController;
-
-Route::middleware(['auth', 'role:coordinador'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::resource('empresas', AdminEmpresaController::class);
-    });
-
-app/Http/Controllers/Admin/EmpresaController.php
-&lt;?php
-
-namespace App\Http\Controllers\Admin;
-
-use App\Http\Controllers\Controller;
-use App\Models\Empresa;
-use App\Http\Requests\Admin\EmpresaRequest;
-
-class EmpresaController extends Controller
-{
-    public function index()
-    {
-        $empresas = Empresa::orderBy('id')->paginate(10);
-
-        return view('admin.empresas.index', compact('empresas'));
-    }
-
-    public function create()
-    {
-        return view('admin.empresas.create');
-    }
-
-    public function store(EmpresaRequest $request)
-    {
-        Empresa::create($request->validated());
-
-        return redirect()
-            ->route('admin.empresas.index')
-            ->with('success', 'Empresa creada correctamente.');
-    }
-
-    public function show(Empresa $empresa)
-    {
-        return view('admin.empresas.show', compact('empresa'));
-    }
-
-    public function edit(Empresa $empresa)
-    {
-        return view('admin.empresas.edit', compact('empresa'));
-    }
-
-    public function update(EmpresaRequest $request, Empresa $empresa)
-    {
-        $empresa->update($request->validated());
-
-        return redirect()
-            ->route('admin.empresas.index')
-            ->with('success', 'Empresa actualizada correctamente.');
-    }
-
-    public function destroy(Empresa $empresa)
-    {
-        if ($empresa->practicas()->exists()) {
-            return redirect()
-                ->route('admin.empresas.index')
-                ->with('error', 'No se puede eliminar una empresa con prácticas asociadas.');
-        }
-
-        $empresa->delete();
-
-        return redirect()
-            ->route('admin.empresas.index')
-            ->with('success', 'Empresa eliminada correctamente.');
-    }
-}
-
-app/Http/Requests/Admin/EmpresaRequest.php
-&lt;?php
-
-namespace App\Http\Requests\Admin;
-
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
-class EmpresaRequest extends FormRequest
-{
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    public function rules(): array
-    {
-        $empresa = $this->route('empresa');
-        $empresaId = $empresa ? $empresa->id : null;
-
-        return [
-            'nombre'            => ['required', 'string', 'max:150'],
-            'cif'               => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('empresas', 'cif')->ignore($empresaId),
-            ],
-            'sector'            => ['nullable', 'string', 'max:150'],
-            'ciudad'            => ['nullable', 'string', 'max:100'],
-            'email_contacto'    => ['nullable', 'email', 'max:150'],
-            'telefono_contacto' => ['nullable', 'string', 'max:20'],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'nombre.required' => 'El nombre de la empresa es obligatorio.',
-            'cif.required'    => 'El CIF es obligatorio.',
-            'cif.unique'      => 'Ya existe una empresa con ese CIF.',
-            'email_contacto.email' => 'El email de contacto no es válido.',
-        ];
-    }
-}
-
-app/Models/Empresa.php
-&lt;?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-class Empresa extends Model
-{
-    use HasFactory;
-
-    protected $table = 'empresas';
-
-    protected $fillable = [
-        'nombre',
-        'cif',
-        'sector',
-        'ciudad',
-        'email_contacto',
-        'telefono_contacto',
-    ];
-
-    public function practicas(): HasMany
-    {
-        return $this->hasMany(Practica::class);
-    }
-}
-@endverbatim</code></pre>
-        </div>
-    </div>
 </div>
 @endsection

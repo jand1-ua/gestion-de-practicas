@@ -15,6 +15,25 @@
 <body>
 @php
     $user = auth()->user();
+    $isActive = static fn (...$patterns) => request()->routeIs(...$patterns) ? ' is-active' : '';
+
+    $primaryRoute = null;
+    $primaryLabel = null;
+    $primaryPatterns = [];
+
+    if ($user?->isCoordinator()) {
+        $primaryRoute = route('admin.dashboard');
+        $primaryLabel = 'Panel coordinador';
+        $primaryPatterns = ['admin.*', 'area.coordinador'];
+    } elseif ($user?->isAlumno()) {
+        $primaryRoute = route('area.alumno');
+        $primaryLabel = 'Mi área';
+        $primaryPatterns = ['area.alumno'];
+    } elseif ($user?->isTutor()) {
+        $primaryRoute = route('area.tutor');
+        $primaryLabel = 'Mi área';
+        $primaryPatterns = ['area.tutor'];
+    }
 @endphp
 
 <div class="wrap stack">
@@ -23,7 +42,7 @@
             <div class="logo" aria-hidden="true"></div>
             <div>
                 <h1>PractUA</h1>
-                <p>Alumnos · tutores · coordinadores</p>
+                <p>Gestión de prácticas externas</p>
             </div>
         </a>
 
@@ -32,15 +51,13 @@
         </button>
 
         <nav id="app-nav" class="nav" aria-label="Navegación principal">
-            @if ($user)
-                <a class="btn" href="{{ route('mensajes.index') }}">Mensajería</a>
+            <a class="btn{{ $isActive('home') }}" href="{{ route('home') }}">Inicio</a>
 
-                @if ($user->role === 'coordinador')
-                    <a class="btn btn-primary" href="{{ route('admin.dashboard') }}">Panel coordinador</a>
-                @elseif ($user->role === 'alumno')
-                    <a class="btn btn-primary" href="{{ route('area.alumno') }}">Mi área</a>
-                @elseif ($user->role === 'tutor')
-                    <a class="btn btn-primary" href="{{ route('area.tutor') }}">Mi área</a>
+            @if ($user)
+                <a class="btn{{ $isActive('mensajes.*') }}" href="{{ route('mensajes.index') }}">Mensajería</a>
+
+                @if ($primaryRoute && $primaryLabel)
+                    <a class="btn btn-primary{{ $isActive(...$primaryPatterns) }}" href="{{ $primaryRoute }}">{{ $primaryLabel }}</a>
                 @endif
 
                 <form class="inline" action="{{ route('logout') }}" method="POST">
@@ -48,7 +65,7 @@
                     <button class="btn btn-danger" type="submit">Cerrar sesión</button>
                 </form>
             @else
-                <a class="btn btn-primary" href="{{ route('login') }}">Iniciar sesión</a>
+                <a class="btn btn-primary{{ $isActive('login') }}" href="{{ route('login') }}">Iniciar sesión</a>
             @endif
         </nav>
     </header>
@@ -59,8 +76,8 @@
     </main>
 
     <footer class="app-footer" role="contentinfo">
-        <div>PractUA · Laravel v{{ Illuminate\Foundation\Application::VERSION }}</div>
-        <div class="muted">PHP v{{ PHP_VERSION }}</div>
+        <div>PractUA · Plataforma de gestión de prácticas</div>
+        <div class="muted">Universidad · Empresas · Tutores · Alumnos</div>
     </footer>
 </div>
 

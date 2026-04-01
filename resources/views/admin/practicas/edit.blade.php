@@ -7,12 +7,11 @@
 
 <div class="pagehead">
     <div>
-        <h2>Editar práctica #{{ $practica->id }}</h2>
+        <h2>Editar práctica</h2>
         <p>Actualiza la asignación, fechas y estado.</p>
     </div>
 
     <div class="actions">
-        <a class="btn" href="{{ route('admin.practicas.show', $practica) }}">Ver detalle</a>
         <a class="btn" href="{{ route('admin.practicas.index') }}">Volver</a>
     </div>
 </div>

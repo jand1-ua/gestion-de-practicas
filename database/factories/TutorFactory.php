@@ -19,7 +19,7 @@ class TutorFactory extends Factory
             'empresa_id' => Empresa::factory(),
             'nombre'     => fake()->name(),
             'email'      => fake()->unique()->safeEmail(),
-            'telefono'   => fake()->phoneNumber(),
+            'telefono'   => '+34' . fake()->numerify('#########'),
         ];
     }
 }

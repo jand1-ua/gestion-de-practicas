@@ -3,16 +3,21 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-    
-    public function showLoginForm()
+    public function showLoginForm(): View|RedirectResponse
     {
         if (Auth::check()) {
-            $route = $this->redirectRouteFor(Auth::user()->role);
+            if (Auth::user()->must_change_password) {
+                return redirect()->route('password.setup.edit');
+            }
+
+            $route = $this->redirectRouteFor((string) Auth::user()->role);
 
             if ($route === 'login') {
                 Auth::logout();
@@ -20,7 +25,7 @@ class LoginController extends Controller
                 request()->session()->regenerateToken();
 
                 return view('auth.login')->withErrors([
-                    'email' => 'Tu rol no está configurado correctamente. Contacta con el coordinador.'
+                    'email' => 'Tu rol no está configurado correctamente. Contacta con el coordinador.',
                 ]);
             }
 
@@ -30,11 +35,10 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
@@ -48,8 +52,13 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        $role = Auth::user()->role;
-        $route = $this->redirectRouteFor($role);
+        if (Auth::user()->must_change_password) {
+            return redirect()
+                ->route('password.setup.edit')
+                ->with('info', 'Tu acceso se ha generado con una contraseña temporal. Debes cambiarla ahora.');
+        }
+
+        $route = $this->redirectRouteFor((string) Auth::user()->role);
 
         if ($route === 'login') {
             Auth::logout();
@@ -57,14 +66,14 @@ class LoginController extends Controller
             $request->session()->regenerateToken();
 
             return redirect()->route('login')->withErrors([
-                'email' => 'Tu rol no está configurado correctamente. Contacta con el coordinador.'
+                'email' => 'Tu rol no está configurado correctamente. Contacta con el coordinador.',
             ]);
         }
 
         return redirect()->route($route);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
 
@@ -76,6 +85,11 @@ class LoginController extends Controller
 
     protected function redirectRouteFor(string $role): string
     {
-        return 'home';
+        return match ($role) {
+            'coordinador', 'admin' => 'area.coordinador',
+            'alumno' => 'area.alumno',
+            'tutor' => 'area.tutor',
+            default => 'login',
+        };
     }
 }

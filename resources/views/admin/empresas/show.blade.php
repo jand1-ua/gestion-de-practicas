@@ -7,7 +7,7 @@
 
 <div class="pagehead">
     <div>
-        <h2>Empresa #{{ $empresa->id }}</h2>
+        <h2>{{ $empresa->nombre }}</h2>
         <p>Detalle de la empresa seleccionada.</p>
     </div>
 

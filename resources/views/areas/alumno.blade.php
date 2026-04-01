@@ -17,7 +17,7 @@
 <div class="grid-2">
     <div class="card">
         <h3>Mi perfil</h3>
-        <p style="margin-top:10px;"><strong>{{ $user->name }}</strong></p>
+        <p style="margin-top:10px;"><strong>{{ $user->profileName() }}</strong></p>
         <p class="muted" style="margin:6px 0 0;">{{ $user->email }}</p>
         <p style="margin:10px 0 0;"><span class="badge badge-ok">alumno</span></p>
     </div>

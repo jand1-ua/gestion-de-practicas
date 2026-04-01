@@ -3,6 +3,19 @@
 @section('title', 'Nuevo mensaje · Gestión de Prácticas')
 
 @section('content')
+@php
+    $authUser = auth()->user();
+    $backRoute = $authUser?->isCoordinator()
+        ? route('admin.dashboard')
+        : ($authUser?->isTutor()
+            ? route('area.tutor')
+            : route('area.alumno'));
+    $backLabel = $authUser?->isCoordinator() ? 'Panel coordinador' : 'Mi área';
+@endphp
+
+@if($authUser?->isCoordinator())
+    @include('partials.admin-subnav')
+@endif
 <div class="pagehead">
     <div>
         <h2>Nuevo mensaje</h2>
@@ -10,6 +23,7 @@
     </div>
 
     <div class="actions">
+        <a class="btn" href="{{ $backRoute }}">{{ $backLabel }}</a>
         <a class="btn" href="{{ route('mensajes.index') }}">Volver a mensajería</a>
     </div>
 </div>
@@ -30,7 +44,7 @@
                     @foreach($destinatarios as $dest)
                         <option value="{{ $dest->id }}"
                             @selected(old('destinatario_id', $destinatarioId ?? '') == $dest->id)>
-                            {{ $dest->name }} ({{ $dest->role }})
+                            {{ $dest->profileName() !== '' ? $dest->profileName() : $dest->email }} ({{ $dest->roleLabel() }})
                         </option>
                     @endforeach
                 </select>
