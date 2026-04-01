@@ -7,6 +7,20 @@
     <title>@yield('title', 'PractUA')</title>
 
     <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <script>
+        (function () {
+            try {
+                var storedTheme = window.localStorage.getItem('practua-theme');
+                var theme = storedTheme === 'light' || storedTheme === 'dark'
+                    ? storedTheme
+                    : 'dark';
+
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (error) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script src="{{ asset('js/app.js') }}" defer></script>
 
@@ -52,6 +66,10 @@
 
         <nav id="app-nav" class="nav" aria-label="Navegación principal">
             <a class="btn{{ $isActive('home') }}" href="{{ route('home') }}">Inicio</a>
+            <button class="btn theme-toggle" type="button" data-theme-toggle aria-pressed="false" title="Cambiar entre modo claro y oscuro">
+                <span class="theme-toggle__icon" data-theme-toggle-icon aria-hidden="true">☀️</span>
+                <span data-theme-toggle-label>Modo claro</span>
+            </button>
 
             @if ($user)
                 <a class="btn{{ $isActive('mensajes.*') }}" href="{{ route('mensajes.index') }}">Mensajería</a>

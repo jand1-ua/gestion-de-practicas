@@ -13,13 +13,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
-/*
-|--------------------------------------------------------------------------
-| Rutas heredadas de las sesiones de clase
-|--------------------------------------------------------------------------
-| Se redirigen al inicio para que la aplicación muestre únicamente
-| el flujo funcional final y no pantallas de demostración docente.
-*/
 Route::get('/sesiones', function () {
     return to_route('home')->with('info', 'El índice de sesiones ya no forma parte de la versión final de la aplicación.');
 })->name('sesiones');
